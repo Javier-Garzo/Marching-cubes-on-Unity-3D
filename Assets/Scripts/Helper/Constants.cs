@@ -2,8 +2,28 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Table
+public static class Constants
 {
+    //configurable variables
+    public const int CHUNK_SIZE = 16;//Number voxel per side
+    public const int REGION_SIZE = 32;//Number chunk per side
+    public const int MAX_HEIGHT = 256;//Number of voxel of height in a chunk
+    public const float VOXEL_SIZE = 1;//Size of a side of a voxel
+
+    //Fixed variables, don't touch
+    public const int CHUNK_POINT_BYTE = 2;//Ammount of byte that we need to save a point of a voxel
+
+    //auto-configurable variables, don't touch
+    public const int REGION_CHUNKS = REGION_SIZE * REGION_SIZE;
+    public const int CHUNK_BYTES = (CHUNK_SIZE+1) * (CHUNK_SIZE + 1) * (MAX_HEIGHT+1) * CHUNK_POINT_BYTE;//we need a extra point per side
+    public const int REGION_BYTES = REGION_SIZE * REGION_SIZE * CHUNK_BYTES;
+
+    public const float CHUNK_SIDE = CHUNK_SIZE * VOXEL_SIZE;
+    public const int CHUNK_VOXEL_AREA = CHUNK_SIZE * CHUNK_SIZE;
+    public const int CHUNK_CUBES = CHUNK_SIZE * CHUNK_SIZE * MAX_HEIGHT;
+
+    #region mesh building
+    //Mesh build tables
     public static int[] edgeTable ={
         0x0  , 0x109, 0x203, 0x30a, 0x406, 0x50f, 0x605, 0x70c,
         0x80c, 0x905, 0xa0f, 0xb06, 0xc0a, 0xd03, 0xe09, 0xf00,
@@ -311,7 +331,7 @@ public class Table
         3
     };
 
-     public static int[] cornerIndexBFromEdge = {
+    public static int[] cornerIndexBFromEdge = {
         1,
         2,
         3,
@@ -325,7 +345,5 @@ public class Table
         6,
         7
     };
-
-
+    #endregion
 }
-

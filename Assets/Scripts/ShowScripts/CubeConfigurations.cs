@@ -9,6 +9,7 @@ public class CubeConfigurations : MonoBehaviour
     private GameObject[] configurationObj;
     private MeshBuilder meshBuilder;
     private int[][] status = {
+    //0 means that vertex is contained by the figure
     new int[] { 1, 1, 1, 1, 1, 1, 1, 1 },
     new int[] { 1, 1, 1, 0, 1, 1, 1, 1 },
     new int[] { 1, 1, 0, 0, 1, 1, 1, 1 },
@@ -71,12 +72,12 @@ public class CubeConfigurations : MonoBehaviour
         };
 
         string bits = "";
-        for (int i = 0; i < vertexStatus.Length; i++)
+        for (int i = vertexStatus.Length-1; i >= 0; i--)
             bits = bits + vertexStatus[i].ToString();
 
-            GameObject cubeObj = new GameObject("Configuration-"+ bits,  typeof(MeshFilter), typeof(MeshRenderer));
+        GameObject cubeObj = new GameObject("Configuration-"+ bits,  typeof(MeshFilter), typeof(MeshRenderer));
         cubeObj.transform.position = translation;
-        Mesh myMesh = meshBuilder.buildMesh(meshBuilder.calculateVertex(cube));
+        Mesh myMesh = meshBuilder.buildMesh(meshBuilder.CalculateVertex(cube));
 
         cubeObj.GetComponent<MeshFilter>().mesh = myMesh;
         cubeObj.GetComponent<MeshRenderer>().material = faceMaterial;

@@ -350,7 +350,7 @@ GameObject:
   - component: {fileID: 1131598850}
   - component: {fileID: 1131598851}
   m_Layer: 0
-  m_Name: Singelton
+  m_Name: singleton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -382,5 +382,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a71d4d4994b362a4e8d7d105e9c0f33a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  surfaceLevel: 0.7
-  interpolate: 0
+  surfaceLevel: 0.8
+  interpolate: 1
