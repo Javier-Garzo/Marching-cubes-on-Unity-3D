@@ -8,19 +8,23 @@ public static class Constants
     public const int CHUNK_SIZE = 16;//Number voxel per side
     public const int REGION_SIZE = 32;//Number chunk per side
     public const int MAX_HEIGHT = 256;//Number of voxel of height in a chunk
-    public const float VOXEL_SIZE = 1;//Size of a side of a voxel
+    public const float VOXEL_SIDE = 1;//Size of a side of a voxel
 
     //Fixed variables, don't touch
     public const int CHUNK_POINT_BYTE = 2;//Ammount of byte that we need to save a point of a voxel
 
     //auto-configurable variables, don't touch
     public const int REGION_CHUNKS = REGION_SIZE * REGION_SIZE;
-    public const int CHUNK_BYTES = (CHUNK_SIZE+1) * (CHUNK_SIZE + 1) * (MAX_HEIGHT+1) * CHUNK_POINT_BYTE;//we need a extra point per side
+    public const int CHUNK_BYTES = (CHUNK_SIZE+1) * (CHUNK_SIZE + 1) * (MAX_HEIGHT+1) * CHUNK_POINT_BYTE;//we need a extra vertex per voxel, CHUNK_SIZE + 1
     public const int REGION_BYTES = REGION_SIZE * REGION_SIZE * CHUNK_BYTES;
 
-    public const float CHUNK_SIDE = CHUNK_SIZE * VOXEL_SIZE;
+    public const float CHUNK_SIDE = CHUNK_SIZE * VOXEL_SIDE;
     public const int CHUNK_VOXEL_AREA = CHUNK_SIZE * CHUNK_SIZE;
-    public const int CHUNK_CUBES = CHUNK_SIZE * CHUNK_SIZE * MAX_HEIGHT;
+    public const int CHUNK_VERTEX_SIZE = CHUNK_SIZE + 1;
+    public const int CHUNK_VERTEX_HEIGHT = MAX_HEIGHT + 1;
+    public const int CHUNK_VERTEX_AREA = CHUNK_VERTEX_SIZE * CHUNK_VERTEX_SIZE;
+
+
 
     #region mesh building
     //Mesh build tables

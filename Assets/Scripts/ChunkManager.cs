@@ -20,13 +20,14 @@ public class ChunkManager : MonoBehaviour
     private float loadRegionDistance;
 
 
+    //Load on initialize the game
     private void Awake()
     {
         player = GameObject.FindGameObjectWithTag("Player").transform;
         lastPlayerPos = player.position;
-        hideDistance = Constants.VOXEL_SIZE* Constants.CHUNK_SIZE * chunkViewDistance;
+        hideDistance = Constants.CHUNK_SIDE * chunkViewDistance;
         removeDistance = hideDistance + hideDistance * chunkMantainDistance;
-        loadRegionDistance = Constants.VOXEL_SIZE * Constants.CHUNK_SIZE * Constants.REGION_SIZE;
+        loadRegionDistance = Constants.CHUNK_SIDE * Constants.REGION_SIZE;
         initRegion(0,0);
     }
 
@@ -64,6 +65,7 @@ public class ChunkManager : MonoBehaviour
         regionDict = newRegionDict;
     }
 
+    //Called each frame
     void Update()
     {
         HiddeRemoveChunk();
@@ -111,7 +113,8 @@ public class ChunkManager : MonoBehaviour
     /// </summary>
     void CheckNewChunks()
     {
-        Vector2Int actualChunk =new Vector2Int(Mathf.CeilToInt(player.position.x / Constants.CHUNK_SIDE), Mathf.CeilToInt(player.position.z / Constants.CHUNK_SIDE));
+        Vector2Int actualChunk =new Vector2Int(Mathf.CeilToInt((player.position.x- Constants.CHUNK_SIDE / 2) / Constants.CHUNK_SIDE ),
+                                                Mathf.CeilToInt((player.position.z - Constants.CHUNK_SIDE / 2) / Constants.CHUNK_SIDE ));
         //Debug.Log("Actual chunk: " + actualChunk);
         for(int x= actualChunk.x-chunkViewDistance; x< actualChunk.x + chunkViewDistance; x++)
         {

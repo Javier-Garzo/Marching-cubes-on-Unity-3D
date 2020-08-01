@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class Region
 {
-    byte[] chunkData;
-    int regionX;
-    int regionZ;
+    private byte[] chunkData;
+    private int regionX;
+    private int regionZ;
 
 
     /// <summary>
@@ -20,18 +20,19 @@ public class Region
         chunkData = new byte[Constants.REGION_BYTES];
         //load region data, temp implementation: Same terrain
         int index = 0;
+        int offset = 289;
         for (int i = 0; i< Constants.REGION_CHUNKS; i++)
         {
-            for (int j = 0; j< Constants.CHUNK_BYTES / 2; j+=2)
+            for (int j = 0; j< Constants.CHUNK_BYTES/2 + offset ; j+=2)
             {
-                chunkData[index] = 0;//terrain
+                chunkData[index] = 255;//terrain
                 chunkData[index+1] = 0;//type material, now empty
                 index += 2;
             }
             
-            for (int j = Constants.CHUNK_BYTES/2; j < Constants.CHUNK_BYTES-1; j += 2)
+            for (int j = Constants.CHUNK_BYTES/2 + offset; j < Constants.CHUNK_BYTES; j += 2)
             {
-                chunkData[index] = 255;//air
+                chunkData[index] = 0;//air
                 chunkData[index + 1] = 0;//type material, now empty
                 index += 2;
             }
@@ -56,9 +57,5 @@ public class Region
         return chunk;
     }
 
-    public void SaveRegion()
-    {
-        //save region data
 
-    }
 }

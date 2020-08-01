@@ -131,7 +131,7 @@ GameObject:
   - component: {fileID: 67193912}
   - component: {fileID: 67193910}
   m_Layer: 0
-  m_Name: MarchingCubes
+  m_Name: CubeConfigurations
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -150,7 +150,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rotSpeed: 40
-  faceMaterial: {fileID: 2100000, guid: 2f1dbbdec19397946bb81ba4d7b956a5, type: 2}
+  faceMaterial: {fileID: 2100000, guid: 6d2f8adbec330cd44b1dfbd52b4b1de6, type: 2}
 --- !u!4 &67193912
 Transform:
   m_ObjectHideFlags: 0
@@ -250,7 +250,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 705507993}
   m_LocalRotation: {x: 0.40821788, y: -0.23456968, z: 0.10938163, w: 0.8754261}
-  m_LocalPosition: {x: 0, y: 3, z: 0}
+  m_LocalPosition: {x: 0, y: 15.93, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -333,7 +333,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: -10}
+  m_LocalPosition: {x: 0, y: 0.58, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -350,7 +350,7 @@ GameObject:
   - component: {fileID: 1131598850}
   - component: {fileID: 1131598851}
   m_Layer: 0
-  m_Name: singleton
+  m_Name: MarchingCubes
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -382,5 +382,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a71d4d4994b362a4e8d7d105e9c0f33a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  surfaceLevel: 0.8
-  interpolate: 1
+  isoLevel: 0.2
+  interpolate: 0

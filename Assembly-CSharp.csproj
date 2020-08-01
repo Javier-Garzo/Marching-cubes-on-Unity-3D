@@ -69,8 +69,10 @@
     <Compile Include="Assets\Scripts\Helper\Singleton.cs" />
     <Compile Include="Assets\Scripts\MeshBuilder.cs" />
     <Compile Include="Assets\Scripts\Region.cs" />
+    <Compile Include="Assets\Scripts\ShowScripts\CubeCasesReduction.cs" />
     <Compile Include="Assets\Scripts\ShowScripts\CubeConfigurations.cs" />
     <Compile Include="Assets\Scripts\ShowScripts\PlayerFlyMovement.cs" />
+    <None Include="Assets\Scripts\Helper\ColorCullShader.shader" />
     <None Include="Assets\Scripts\Helper\DoubleFaceShader.shader" />
     <Reference Include="Unity.Timeline.Editor">
       <HintPath>C:/Users/jjgar/Documents/GitHub/Marching-cubes-en-Unity-3D/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
