@@ -4,16 +4,25 @@ using UnityEngine;
 
 public static class Constants
 {
-    //configurable variables
+    #region configurable variables
     public const int CHUNK_SIZE = 16;//Number voxel per side
     public const int REGION_SIZE = 32;//Number chunk per side
-    public const int MAX_HEIGHT = 256;//Number of voxel of height in a chunk
+    public const int MAX_HEIGHT = 40;//Number of voxel of height in a chunk, pair number recommended
     public const float VOXEL_SIDE = 1;//Size of a side of a voxel
 
-    //Fixed variables, don't touch
-    public const int CHUNK_POINT_BYTE = 2;//Ammount of byte that we need to save a point of a voxel
+    //For change the type of shading, flatShading or normal. Change the define of the MeshBuilder.cs, in the line 4.
+    public const int NUMBER_MATERIALS = 9;//Total number of different materials, max = 255 = 1 byte
+    public const int MATERIAL_FOR_ROW = 3; //Number of materials in a row of the texture
 
-    //auto-configurable variables, don't touch
+    #endregion
+
+    //Fixed variables, auto-configurable variables and mesh building tables. IMPORTANT: DONT'T TOUCH BEHIND
+    #region Fixed variables
+    public const int CHUNK_POINT_BYTE = 2;//Amount of byte that we need to save a point of a voxel
+
+    #endregion
+
+    # region auto-configurable variables
     public const int REGION_CHUNKS = REGION_SIZE * REGION_SIZE;
     public const int CHUNK_BYTES = (CHUNK_SIZE+1) * (CHUNK_SIZE + 1) * (MAX_HEIGHT+1) * CHUNK_POINT_BYTE;//we need a extra vertex per voxel, CHUNK_SIZE + 1
     public const int REGION_BYTES = REGION_SIZE * REGION_SIZE * CHUNK_BYTES;
@@ -23,7 +32,11 @@ public static class Constants
     public const int CHUNK_VERTEX_SIZE = CHUNK_SIZE + 1;
     public const int CHUNK_VERTEX_HEIGHT = MAX_HEIGHT + 1;
     public const int CHUNK_VERTEX_AREA = CHUNK_VERTEX_SIZE * CHUNK_VERTEX_SIZE;
+    public const int CHUNK_TOTAL_VERTEX = CHUNK_VERTEX_SIZE * CHUNK_VERTEX_SIZE * CHUNK_VERTEX_HEIGHT;
+    public const float MATERIAL_SIZE = (float)MATERIAL_FOR_ROW / (float)NUMBER_MATERIALS;
+    public const float MATERIAL_OFFSET = MATERIAL_SIZE / 2f;
 
+    #endregion
 
 
     #region mesh building

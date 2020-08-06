@@ -11,20 +11,20 @@ public class CubeConfigurations : MonoBehaviour
     private int[][] status = {
     //0 means that vertex is contained by the figure
     new int[] { 0, 0, 0, 0, 0, 0, 0, 0 },
-    new int[] { 0, 0, 0, 1, 0, 0, 0, 0 },
-    new int[] { 0, 0, 1, 1, 0, 0, 0, 0 },
-    new int[] { 0, 0, 0, 1, 0, 0, 1, 0 },
-    new int[] { 1, 1, 1, 0, 0, 0, 0, 0 },
-    new int[] { 1, 1, 1, 1, 0, 0, 0, 0 },
-    new int[] { 1, 1, 1, 0, 0, 0, 0, 1 },
-    new int[] { 0, 1, 0, 1, 1, 0, 1, 0 },
-    new int[] { 1, 1, 0, 1, 1, 0, 0, 0 },
-    new int[] { 1, 1, 1, 0, 1, 0, 0, 0 },
-    new int[] { 0, 0, 0, 1, 0, 1, 0, 0 },
-    new int[] { 0, 0, 1, 1, 0, 1, 0, 0 },
-    new int[] { 0, 0, 1, 0, 0, 1, 0, 1 },
-    new int[] { 0, 1, 0, 1, 0, 1, 0, 1 },
-    new int[] { 1, 1, 0, 1, 0, 1, 0, 0 }
+    new int[] { 0, 0, 0, 200, 0, 0, 0, 0 },
+    new int[] { 0, 0, 200, 200, 0, 0, 0, 0 },
+    new int[] { 0, 0, 0, 200, 0, 0, 200, 0 },
+    new int[] { 200, 200, 200, 0, 0, 0, 0, 0 },
+    new int[] { 200, 200, 200, 200, 0, 0, 0, 0 },
+    new int[] { 200, 200, 200, 0, 0, 0, 0, 200 },
+    new int[] { 0, 200, 0, 200, 200, 0, 200, 0 },
+    new int[] { 200, 200, 0, 200, 200, 0, 0, 0 },
+    new int[] { 200, 200, 200, 0, 200, 0, 0, 0 },
+    new int[] { 0, 0, 0, 200, 0, 200, 0, 0 },
+    new int[] { 0, 0, 200, 200, 0, 200, 0, 0 },
+    new int[] { 0, 0, 200, 0, 0, 200, 0, 200 },
+    new int[] { 0, 200, 0, 200, 0, 200, 0, 200 },
+    new int[] { 200, 200, 0, 200, 0, 200, 0, 0 }
     };
     // Start is called before the first frame update
     void Awake()

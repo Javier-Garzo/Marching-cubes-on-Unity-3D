@@ -382,5 +382,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a71d4d4994b362a4e8d7d105e9c0f33a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isoLevel: 0.2
+  isoLevel: 60
   interpolate: 0

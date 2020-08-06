@@ -26,14 +26,20 @@ public class Region
             for (int j = 0; j< Constants.CHUNK_BYTES/2 + offset ; j+=2)
             {
                 chunkData[index] = 255;//terrain
-                chunkData[index+1] = 0;//type material, now empty
+                if(j< Constants.CHUNK_BYTES *2/5)
+                    chunkData[index + 1] = 2;//stone
+                else if(j < Constants.CHUNK_BYTES *2.438f/5)
+                    chunkData[index + 1] = 1;//dirt
+                else
+                    chunkData[index + 1] = 0;//grass
+
                 index += 2;
             }
             
             for (int j = Constants.CHUNK_BYTES/2 + offset; j < Constants.CHUNK_BYTES; j += 2)
             {
                 chunkData[index] = 0;//air
-                chunkData[index + 1] = 0;//type material, now empty
+                chunkData[index + 1] = 255;//type material, now empty
                 index += 2;
             }
         }

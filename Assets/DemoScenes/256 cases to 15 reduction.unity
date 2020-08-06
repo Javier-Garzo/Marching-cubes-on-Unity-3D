@@ -598,8 +598,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a71d4d4994b362a4e8d7d105e9c0f33a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isoLevel: 0.5
-  interpolate: 0
+  isoLevel: 60
+  interpolate: 1
 --- !u!1 &1214721420
 GameObject:
   m_ObjectHideFlags: 0
