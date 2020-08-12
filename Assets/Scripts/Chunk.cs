@@ -9,15 +9,24 @@ public class Chunk : MonoBehaviour
     [Tooltip("Active gizmos that represent all vertex of terrain, very expensive")]
     public bool advancedDebug = false;
     private byte[] data;
+    private int Xpos;
+    private int Zpos;
+    private Region fatherRegion;
     private bool modified = false;
+    private bool changesUnsaved;
 
     /// <summary>
     /// Create a Chunk using a byte[] that contain all the data of the chunk.
     /// </summary>
     /// <param name="b"> data of the chunk</param>
-    public Chunk ChunkInit(byte[] b)
+    public Chunk ChunkInit(byte[] b, int x, int z, Region region, bool save)
     {
         data = b;
+        Xpos = x;
+        Zpos = z;
+        fatherRegion = region;
+        changesUnsaved = save;
+
         Mesh myMesh = MeshBuilder.Instance.BuildChunk(b);
         GetComponent<MeshFilter>().mesh = myMesh;
 
@@ -30,11 +39,40 @@ public class Chunk : MonoBehaviour
         return this;
     }
 
+
+    /// <summary>
+    /// TEMPORAL CODE. Generate plain chunk with sample data.
+    /// </summary>
+    public static byte[] GenerateSampleData()
+    {
+        int offset = 289;
+        byte[] chunkData = new byte[Constants.CHUNK_TOTAL_VERTEX * Constants.CHUNK_POINT_BYTE];
+        for (int j = 0; j < Constants.CHUNK_BYTES / 2 + offset; j += 2)
+        {
+            chunkData[j] = 255;//terrain
+            if (j < Constants.CHUNK_BYTES * 2 / 5)
+                chunkData[j + 1] = 2;//stone
+            else if (j < Constants.CHUNK_BYTES * 2.438f / 5)
+                chunkData[j + 1] = 1;//dirt
+            else
+                chunkData[j + 1] = 0;//grass
+        }
+
+        for (int j = Constants.CHUNK_BYTES / 2 + offset; j < Constants.CHUNK_BYTES; j += 2)
+        {
+            chunkData[j] = 0;//air
+            chunkData[j + 1] = 255;//type material, now empty
+        }
+
+        return chunkData;
+    }
+
     public void Update()
     {
         if(modified)
         {
             modified = false;
+            changesUnsaved = true;
 
             Mesh myMesh = MeshBuilder.Instance.BuildChunk(data);
             GetComponent<MeshFilter>().mesh = myMesh;
@@ -94,6 +132,16 @@ public class Chunk : MonoBehaviour
         data[byteIndex] = (byte)newValue;
         modified = true; //Don't direct change because some vertex are modifier in the same editions, wait to next frame
 
+
+    }
+
+    /// <summary>
+    /// Save the chunk data in the region if the chunk get some changes.
+    /// </summary>
+    public void saveChunkInRegion()
+    {
+        if(changesUnsaved)
+            fatherRegion.saveChunkData(data, Xpos, Zpos);
     }
 
 

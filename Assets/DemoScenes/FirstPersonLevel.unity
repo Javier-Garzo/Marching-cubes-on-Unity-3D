@@ -334,6 +334,7 @@ MonoBehaviour:
   terrainMaterial: {fileID: 2100000, guid: e5e158f8f9cada14380f5755c6cef11c, type: 2}
   chunkViewDistance: 7
   chunkMantainDistance: 0.3
+  lastPlayerPos: {x: 0, y: 0, z: 0}
 --- !u!4 &697465278
 Transform:
   m_ObjectHideFlags: 0

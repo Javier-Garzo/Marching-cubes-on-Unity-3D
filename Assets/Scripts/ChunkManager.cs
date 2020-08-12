@@ -1,11 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.IO;
 
 public class ChunkManager : Singleton<ChunkManager>
 {
+    [Tooltip("Material used by all the terrain.")]
     public Material terrainMaterial;
-    [Range(3, Constants.REGION_SIZE/2)][Tooltip("Chunks load and visible for the player,radius distance")]
+    [Range(3, Constants.REGION_SIZE/2)][Tooltip("Chunks load and visible for the player,radius distance.")]
     public int chunkViewDistance = 10;
     [Range(0.1f, 0.6f)][Tooltip("Distance extra for destroy inactive chunks, this chunks consume ram, but load faster.")]
     public float chunkMantainDistance = 0.3f;
@@ -15,7 +17,7 @@ public class ChunkManager : Singleton<ChunkManager>
     private List<Vector2Int> chunkLoadList = new List<Vector2Int>();
 
     private Transform player;
-    private Vector3 lastPlayerPos;
+    public Vector3 lastPlayerPos;
     private int lastChunkViewDistance;
     private float hideDistance;
     private float removeDistance;
@@ -26,8 +28,12 @@ public class ChunkManager : Singleton<ChunkManager>
     private void Awake()
     {
         player = GameObject.FindGameObjectWithTag("Player").transform;
-        lastPlayerPos = player.position;
+        loadRegionDistance = Constants.CHUNK_SIDE * Constants.REGION_SIZE * Constants.VOXEL_SIDE * 0.9f;
+        lastPlayerPos.x = Mathf.FloorToInt(player.position.x / loadRegionDistance) * loadRegionDistance + loadRegionDistance / 2;
+        lastPlayerPos.z = Mathf.FloorToInt(player.position.z / loadRegionDistance) * loadRegionDistance + loadRegionDistance / 2;
         CalculateDistances();
+        if (!Directory.Exists(Application.persistentDataPath + Region.REGION_DIRECTORY))//Check folder /chunks exists, if not create it
+            Directory.CreateDirectory(Application.persistentDataPath + Region.REGION_DIRECTORY);
         initRegion(0,0);
     }
 
@@ -57,11 +63,19 @@ public class ChunkManager : Singleton<ChunkManager>
             for (int z = initZ-1; z < initZ + 2; z++)
             {
                 if (regionDict.ContainsKey(new Vector2Int(x,z)))
-                    newRegionDict.Add(new Vector2Int(x,z), regionDict[new Vector2Int(x,z)]);
+                {
+                    newRegionDict.Add(new Vector2Int(x, z), regionDict[new Vector2Int(x, z)]);
+                    regionDict.Remove(new Vector2Int(x, z));
+                }
                 else
                     newRegionDict.Add(new Vector2Int(x,z), new Region(x, z));
             }
         }
+        //save old regions
+        foreach (Region region in regionDict.Values)
+            region.SaveRegionData();
+
+        //Assign new region area
         regionDict = newRegionDict;
     }
 
@@ -88,7 +102,7 @@ public class ChunkManager : Singleton<ChunkManager>
             float distance = Mathf.Sqrt(Mathf.Pow((player.position.x - chunk.Value.transform.position.x), 2) + Mathf.Pow((player.position.z - chunk.Value.transform.position.z), 2));
             if (distance > removeDistance)
             {
-                //save chunk data
+                chunk.Value.saveChunkInRegion();//Save chunk only in case that get some modifications
                 Destroy(chunk.Value.gameObject);
                 removeList.Add(chunk.Key);
             }
@@ -154,11 +168,23 @@ public class ChunkManager : Singleton<ChunkManager>
         Vector2Int key = chunkLoadList[0];
 
         Vector2Int regionPos = new Vector2Int(Mathf.FloorToInt(((float)key.x) / Constants.REGION_SIZE), Mathf.FloorToInt(((float)key.y) / Constants.REGION_SIZE));
+        if(!regionDict.ContainsKey(regionPos))//In case that the chunk isn't in the loaded regions we remove it, tp or too fast movement.
+        {
+            chunkLoadList.RemoveAt(0);
+            return;
+        }
         GameObject chunkObj = new GameObject("Chunk_" + key.x + "|" + key.y, typeof(MeshFilter), typeof(MeshRenderer));
         chunkObj.transform.parent = transform;
         chunkObj.transform.position = new Vector3(key.x * Constants.CHUNK_SIDE, 0, key.y * Constants.CHUNK_SIDE);
         //Debug.Log("Try load: "+x+"|"+z +" in "+regionPos);
-        chunkDict.Add(key, chunkObj.AddComponent<Chunk>().ChunkInit(regionDict[regionPos].GetChunk(key.x, key.y)));
+
+        Vector2Int keyInsideChunk = new Vector2Int(key.x - regionPos.x * Constants.REGION_SIZE , key.y - regionPos.y * Constants.REGION_SIZE);
+        //We get X and Y in the world position, we need calculate the x and y in the region.
+        int chunkIndexInRegion = regionDict[regionPos].GetChunkIndex(keyInsideChunk.x, keyInsideChunk.y);
+        if (chunkIndexInRegion != 0)//Load chunk from a region data
+            chunkDict.Add(key, chunkObj.AddComponent<Chunk>().ChunkInit(regionDict[regionPos].GetChunkData(chunkIndexInRegion), keyInsideChunk.x, keyInsideChunk.y, regionDict[regionPos], false));
+        else //Generate chunk with the noise generator
+            chunkDict.Add(key, chunkObj.AddComponent<Chunk>().ChunkInit(Chunk.GenerateSampleData(), keyInsideChunk.x, keyInsideChunk.y, regionDict[regionPos], Constants.SAVE_GENERATED_CHUNKS));
 
         chunkLoadList.RemoveAt(0);
     }
@@ -170,10 +196,10 @@ public class ChunkManager : Singleton<ChunkManager>
     {
         if (Mathf.Abs(lastPlayerPos.x - player.position.x) > loadRegionDistance || Mathf.Abs(lastPlayerPos.z - player.position.z) > loadRegionDistance )
         {
-            int actualX = Mathf.FloorToInt(player.position.x / loadRegionDistance);
-            lastPlayerPos.x = actualX * loadRegionDistance;
+            int actualX = Mathf.FloorToInt(player.position.x / loadRegionDistance) ;
+            lastPlayerPos.x = actualX * loadRegionDistance + loadRegionDistance / 2;
             int actualZ = Mathf.FloorToInt(player.position.z / loadRegionDistance);
-            lastPlayerPos.z = actualZ * loadRegionDistance;
+            lastPlayerPos.z = actualZ * loadRegionDistance + loadRegionDistance / 2;
             LoadRegion(actualX, actualZ);
         }
     }
@@ -188,7 +214,6 @@ public class ChunkManager : Singleton<ChunkManager>
         lastChunkViewDistance = chunkViewDistance;
         hideDistance = Constants.CHUNK_SIDE * chunkViewDistance;
         removeDistance = hideDistance + hideDistance * chunkMantainDistance;
-        loadRegionDistance = Constants.CHUNK_SIDE * Constants.REGION_SIZE;
     }
 
     /// <summary>
@@ -273,4 +298,22 @@ public class ChunkManager : Singleton<ChunkManager>
             }
         }
     }
+
+
+    /// <summary>
+    /// Save all chunk and regions data when user close the game.
+    /// </summary>
+    void OnApplicationQuit()
+    {
+        //save chunks
+        foreach(Chunk chunk in chunkDict.Values)
+            chunk.saveChunkInRegion();
+
+        //save regions
+        foreach (Region region in regionDict.Values)
+            region.SaveRegionData();
+    }
 }
+
+
+

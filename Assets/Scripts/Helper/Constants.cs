@@ -5,14 +5,19 @@ using UnityEngine;
 public static class Constants
 {
     #region configurable variables
-    public const int CHUNK_SIZE = 16;//Number voxel per side
-    public const int REGION_SIZE = 32;//Number chunk per side
-    public const int MAX_HEIGHT = 40;//Number of voxel of height in a chunk, pair number recommended
-    public const float VOXEL_SIDE = 1;//Size of a side of a voxel
+    public const int CHUNK_SIZE = 16; //Number voxel per side
+    public const int MAX_HEIGHT = 40; //Number of voxel of height in a chunk, pair number recommended
+    public const float VOXEL_SIDE = 1; //Size of a side of a voxel
+
+    public const int REGION_SIZE = 32; //Number chunk per side. If change REGION_SIZE maybe you need change REGION_HEADER.
+    public const int REGION_LOOKTABLE_POS_BYTE = 2; //Number of byte needed for represent (REGION_SIZE * REGION_SIZE) +1. Example: (32 x 32) +1= 1025 = 2 bytes needed.  MAX = 4.
 
     //For change the type of shading, flatShading or normal. Change the define of the MeshBuilder.cs, in the line 4.
-    public const int NUMBER_MATERIALS = 9;//Total number of different materials, max = 255 = 1 byte
+    public const int NUMBER_MATERIALS = 9; //Total number of different materials, max = 255 = 1 byte
     public const int MATERIAL_FOR_ROW = 3; //Number of materials in a row of the texture
+
+    public const bool SAVE_GENERATED_CHUNKS = false; //False, no save unmodified chunks, use seed to generate again the next time (-File size -save time +Generation cost). True, generated chunk are saved in the memory (+File size +save time -Generation cost ) 
+    public const bool REGION_SAVE_COMPRESSED = true; //Compress the region files. -File size +CPU cost of save a file. RECOMMENDED: TRUE
 
     #endregion
 
@@ -26,6 +31,7 @@ public static class Constants
     public const int REGION_CHUNKS = REGION_SIZE * REGION_SIZE;
     public const int CHUNK_BYTES = (CHUNK_SIZE+1) * (CHUNK_SIZE + 1) * (MAX_HEIGHT+1) * CHUNK_POINT_BYTE;//we need a extra vertex per voxel, CHUNK_SIZE + 1
     public const int REGION_BYTES = REGION_SIZE * REGION_SIZE * CHUNK_BYTES;
+    public const int REGION_LOOKTABLE_BYTES = REGION_LOOKTABLE_POS_BYTE * REGION_SIZE * REGION_SIZE + REGION_LOOKTABLE_POS_BYTE;//REGION_LOOKTABLE_POS_BYTE offset because first position indicate the last writes position in the chunkTable
 
     public const float CHUNK_SIDE = CHUNK_SIZE * VOXEL_SIDE;
     public const int CHUNK_VOXEL_AREA = CHUNK_SIZE * CHUNK_SIZE;
@@ -33,8 +39,11 @@ public static class Constants
     public const int CHUNK_VERTEX_HEIGHT = MAX_HEIGHT + 1;
     public const int CHUNK_VERTEX_AREA = CHUNK_VERTEX_SIZE * CHUNK_VERTEX_SIZE;
     public const int CHUNK_TOTAL_VERTEX = CHUNK_VERTEX_SIZE * CHUNK_VERTEX_SIZE * CHUNK_VERTEX_HEIGHT;
+
     public const float MATERIAL_SIZE = (float)MATERIAL_FOR_ROW / (float)NUMBER_MATERIALS;
     public const float MATERIAL_OFFSET = MATERIAL_SIZE / 2f;
+
+
 
     #endregion
 

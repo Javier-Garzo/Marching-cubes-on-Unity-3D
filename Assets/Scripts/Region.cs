@@ -1,66 +1,145 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.IO;
 
 public class Region
 {
-    private byte[] chunkData;
+    public const string REGION_DIRECTORY = "/chunks";
+    /*REGIONS DATA = lookTable (REGION_LOOKTABLE_POS_BYTE * number of chunks in a region) + chunks data (2 byte per vertex in each chunk)
+    lookTable: Indicate the start position of the chunk data in the region Data byte list +REGION_LOOKTABLE_POS_BYTE. Because the 0 it's reserved for indicate empty chunk.
+    chunks data: Contains the data of all chunks saved in the region*/
+    private List<byte> regionData;
     private int regionX;
     private int regionZ;
+    private bool modified = false;
+
+
 
 
     /// <summary>
-    /// Create/load a region
+    /// Load the data of a region from a file.
     /// </summary>
     public Region(int x, int z)
     {
-
         regionX = x;
         regionZ = z;
-        chunkData = new byte[Constants.REGION_BYTES];
-        //load region data, temp implementation: Same terrain
-        int index = 0;
-        int offset = 289;
-        for (int i = 0; i< Constants.REGION_CHUNKS; i++)
+        if (File.Exists(DirectionChunkFile()))
         {
-            for (int j = 0; j< Constants.CHUNK_BYTES/2 + offset ; j+=2)
+            if (Constants.REGION_SAVE_COMPRESSED)
             {
-                chunkData[index] = 255;//terrain
-                if(j< Constants.CHUNK_BYTES *2/5)
-                    chunkData[index + 1] = 2;//stone
-                else if(j < Constants.CHUNK_BYTES *2.438f/5)
-                    chunkData[index + 1] = 1;//dirt
-                else
-                    chunkData[index + 1] = 0;//grass
-
-                index += 2;
+                byte[] compressedRegion = File.ReadAllBytes(DirectionChunkFile());//Load compressed region
+                regionData = new List<byte>(CompressHelper.Decompress(compressedRegion));//Decompress the region data
             }
-            
-            for (int j = Constants.CHUNK_BYTES/2 + offset; j < Constants.CHUNK_BYTES; j += 2)
-            {
-                chunkData[index] = 0;//air
-                chunkData[index + 1] = 255;//type material, now empty
-                index += 2;
-            }
+            else
+                regionData = new List<byte>(File.ReadAllBytes(DirectionChunkFile()));//Load region from a file
         }
+        else
+            regionData = new List<byte>(new byte[Constants.REGION_LOOKTABLE_BYTES]);//Look table initialized, all 0
+
+    }
+    
+    /// <summary>
+    /// Return the byte[] from a chunk in the region.
+    /// </summary>
+    public byte[] GetChunkData(int index)
+    {
+        int startPos = Constants.REGION_LOOKTABLE_BYTES + (index-1)*Constants.CHUNK_BYTES; // index-1 because the lookTable start at 1. LookTable position 10 = chunk data position 9.
+        byte[] chunk = new byte[Constants.CHUNK_BYTES];
+
+        for (int i = startPos, j = 0; i < (startPos + Constants.CHUNK_BYTES); i ++,j++)
+        {
+            chunk[j] = regionData[i];
+        }
+
+        return chunk;
     }
 
     /// <summary>
-    /// Extract data of a chunk from a region
+    /// Get the index from the lookTable, the first section of the regionData list<byte>.
     /// </summary>
-    /// <returns>Data of the chunk</returns>
-    public byte[] GetChunk(int x, int z)
+    public int GetChunkIndex(int x, int z)
     {
-        x -= regionX * 32;
-        z -= regionZ * 32;
 
-        byte[] chunk = new byte[Constants.CHUNK_BYTES];
-        int startSize = Constants.CHUNK_BYTES * (z + x * Constants.REGION_SIZE);
-        for (int i = startSize, j = 0; i < (startSize + Constants.CHUNK_BYTES); i ++,j++)
+        int startPos = (x + z * Constants.REGION_SIZE) * Constants.REGION_LOOKTABLE_POS_BYTE + Constants.REGION_LOOKTABLE_POS_BYTE;
+        int index = 0;
+
+        for (int i = 0; i< Constants.REGION_LOOKTABLE_POS_BYTE; i++)
         {
-            chunk[j] = chunkData[i];
+   
+            index |= regionData[startPos+ Constants.REGION_LOOKTABLE_POS_BYTE-i-1] << 8*i;
         }
-        return chunk;
+
+        return index;
+
+
+    }
+
+    /// <summary>
+    /// save a chunk byte[] data in the regionData list<byte> of the Chunk class.
+    /// </summary>
+    public void saveChunkData(byte[] chunkData, int x, int z)
+    {
+        int chunksDataStartPos = GetChunkIndex(x,z); 
+        if(chunksDataStartPos == 0)//Chunk no saved, assign a new position in the chunks data for the lookTable.
+        {
+            int lookTablePos = (x + z * Constants.REGION_SIZE) * Constants.REGION_LOOKTABLE_POS_BYTE + Constants.REGION_LOOKTABLE_POS_BYTE ;
+            int increasePos = Constants.REGION_LOOKTABLE_POS_BYTE - 1;
+            for (int i = Constants.REGION_LOOKTABLE_POS_BYTE-1; i >= 0; i--)
+            {
+                //First done the increase because the 0 is reserved for empty, the lookTable start at 1.
+                if (i == increasePos)
+                {
+                    if (regionData[i] == 255)//Reach 255, need return to 0 and change the previous byte.
+                    {
+                        regionData[i] = 0;
+                        increasePos--;
+                    }
+                    else
+                        regionData[i]++;
+                }
+                //Save the position of chunk in the chunks data inside the lookTable
+                regionData[lookTablePos + i] = regionData[i];
+            }
+            //Write chunks bytes in the regionData list<byte>
+            regionData.AddRange(chunkData);
+        }
+        else
+        {
+            Debug.Log(chunksDataStartPos + "| x: "+x+" z: " + z);
+            int startPos = (chunksDataStartPos - 1) * Constants.CHUNK_BYTES + Constants.REGION_LOOKTABLE_BYTES;
+            // Write chunks bytes in the regionData list<byte>
+            for(int i = 0; i < Constants.CHUNK_BYTES; i++)
+            {
+                regionData[startPos + i] = chunkData[i];
+            }
+        }
+        modified = true;
+    }
+
+    /// <summary>
+    /// Save the region data in a file.
+    /// </summary>
+    public void SaveRegionData()
+    {
+        if(!modified)
+            return;
+
+        if(Constants.REGION_SAVE_COMPRESSED)
+        {
+            byte[] Compressed = CompressHelper.Compress(regionData.ToArray());
+            File.WriteAllBytes(DirectionChunkFile(), Compressed);
+        }
+        else
+            File.WriteAllBytes(DirectionChunkFile(), regionData.ToArray());
+
+    }
+
+
+    //Help function, get chunk file direction.
+    private string DirectionChunkFile()
+    {
+        return Application.persistentDataPath + REGION_DIRECTORY + "/"+ regionX + "."+ regionZ + ".reg";
     }
 
 
