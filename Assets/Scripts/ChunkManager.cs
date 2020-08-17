@@ -16,8 +16,9 @@ public class ChunkManager : Singleton<ChunkManager>
     private Dictionary<Vector2Int, Region> regionDict = new Dictionary<Vector2Int, Region>();
     private List<Vector2Int> chunkLoadList = new List<Vector2Int>();
 
+    private NoiseManager noiseManager;
     private Transform player;
-    public Vector3 lastPlayerPos;
+    private Vector3 lastPlayerPos;
     private int lastChunkViewDistance;
     private float hideDistance;
     private float removeDistance;
@@ -27,6 +28,7 @@ public class ChunkManager : Singleton<ChunkManager>
     //Load on initialize the game
     private void Awake()
     {
+        noiseManager = NoiseManager.Instance;
         player = GameObject.FindGameObjectWithTag("Player").transform;
         loadRegionDistance = Constants.CHUNK_SIDE * Constants.REGION_SIZE * Constants.VOXEL_SIDE * 0.9f;
         lastPlayerPos.x = Mathf.FloorToInt(player.position.x / loadRegionDistance) * loadRegionDistance + loadRegionDistance / 2;
@@ -184,7 +186,7 @@ public class ChunkManager : Singleton<ChunkManager>
         if (chunkIndexInRegion != 0)//Load chunk from a region data
             chunkDict.Add(key, chunkObj.AddComponent<Chunk>().ChunkInit(regionDict[regionPos].GetChunkData(chunkIndexInRegion), keyInsideChunk.x, keyInsideChunk.y, regionDict[regionPos], false));
         else //Generate chunk with the noise generator
-            chunkDict.Add(key, chunkObj.AddComponent<Chunk>().ChunkInit(Chunk.GenerateSampleData(), keyInsideChunk.x, keyInsideChunk.y, regionDict[regionPos], Constants.SAVE_GENERATED_CHUNKS));
+            chunkDict.Add(key, chunkObj.AddComponent<Chunk>().ChunkInit(noiseManager.GenerateChunkData(key), keyInsideChunk.x, keyInsideChunk.y, regionDict[regionPos], Constants.SAVE_GENERATED_CHUNKS));
 
         chunkLoadList.RemoveAt(0);
     }

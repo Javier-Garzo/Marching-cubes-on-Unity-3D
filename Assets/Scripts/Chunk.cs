@@ -39,34 +39,6 @@ public class Chunk : MonoBehaviour
         return this;
     }
 
-
-    /// <summary>
-    /// TEMPORAL CODE. Generate plain chunk with sample data.
-    /// </summary>
-    public static byte[] GenerateSampleData()
-    {
-        int offset = 289;
-        byte[] chunkData = new byte[Constants.CHUNK_TOTAL_VERTEX * Constants.CHUNK_POINT_BYTE];
-        for (int j = 0; j < Constants.CHUNK_BYTES / 2 + offset; j += 2)
-        {
-            chunkData[j] = 255;//terrain
-            if (j < Constants.CHUNK_BYTES * 2 / 5)
-                chunkData[j + 1] = 2;//stone
-            else if (j < Constants.CHUNK_BYTES * 2.438f / 5)
-                chunkData[j + 1] = 1;//dirt
-            else
-                chunkData[j + 1] = 0;//grass
-        }
-
-        for (int j = Constants.CHUNK_BYTES / 2 + offset; j < Constants.CHUNK_BYTES; j += 2)
-        {
-            chunkData[j] = 0;//air
-            chunkData[j + 1] = 255;//type material, now empty
-        }
-
-        return chunkData;
-    }
-
     public void Update()
     {
         if(modified)

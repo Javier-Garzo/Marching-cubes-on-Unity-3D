@@ -18,6 +18,8 @@ public class FlyingCamera : MonoBehaviour
             Cursor.visible = true;
             Cursor.lockState = CursorLockMode.Locked;
         }
+        yaw = transform.eulerAngles.y;
+        pitch = transform.eulerAngles.x;
     }
 
     // Update is called once per frame

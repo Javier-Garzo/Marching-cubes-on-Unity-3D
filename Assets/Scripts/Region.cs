@@ -106,7 +106,6 @@ public class Region
         }
         else
         {
-            Debug.Log(chunksDataStartPos + "| x: "+x+" z: " + z);
             int startPos = (chunksDataStartPos - 1) * Constants.CHUNK_BYTES + Constants.REGION_LOOKTABLE_BYTES;
             // Write chunks bytes in the regionData list<byte>
             for(int i = 0; i < Constants.CHUNK_BYTES; i++)
