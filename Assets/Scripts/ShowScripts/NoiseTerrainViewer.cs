@@ -4,7 +4,12 @@ using UnityEngine;
 
 public class NoiseTerrainViewer : MonoBehaviour
 {
+
+    [Tooltip("Number of chunks of the view area")]
+    [Range(1, 20)]
     public int testSize = 1;
+    [Tooltip("Offset from the chunk (0,0), move the whole map generation")]
+    public Vector2Int chunkOffset;
     private Dictionary<Vector2Int, Chunk> chunkDict = new Dictionary<Vector2Int, Chunk>();
     private NoiseManager noiseManager;
     private Region fakeRegion;//Used because chunks need a fahter region
@@ -35,12 +40,13 @@ public class NoiseTerrainViewer : MonoBehaviour
         {
             for (int x = -halfSize; x < halfSize+1; x++)
             {
-                Vector2Int key = new Vector2Int(x,z);
+                Vector2Int key = new Vector2Int(x, z);
                 GameObject chunkObj = new GameObject("Chunk_" + key.x + "|" + key.y, typeof(MeshFilter), typeof(MeshRenderer));
                 chunkObj.transform.parent = transform;
                 chunkObj.transform.position = new Vector3(key.x * Constants.CHUNK_SIDE, 0, key.y * Constants.CHUNK_SIDE);
 
-                chunkDict.Add(key, chunkObj.AddComponent<Chunk>().ChunkInit(noiseManager.GenerateChunkData(key), key.x, key.y, fakeRegion, false));
+                Vector2Int offsetKey = new Vector2Int(x + chunkOffset.x, z+ chunkOffset.y);
+                chunkDict.Add(key, chunkObj.AddComponent<Chunk>().ChunkInit(noiseManager.GenerateChunkData(offsetKey), key.x, key.y, fakeRegion, false));
             }
         }
     }

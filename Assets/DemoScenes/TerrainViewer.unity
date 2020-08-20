@@ -240,7 +240,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 642371011}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &270081034
 MonoBehaviour:
@@ -266,7 +266,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 399327860}
-  - component: {fileID: 399327859}
   m_Layer: 0
   m_Name: TerrainGenerator
   m_TagString: Untagged
@@ -274,19 +273,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &399327859
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 399327858}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f9568358fb4a217469249723fa12e0e6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  testSize: 6
 --- !u!4 &399327860
 Transform:
   m_ObjectHideFlags: 0
@@ -420,8 +406,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1131598850}
-  - {fileID: 1876185449}
   - {fileID: 270081033}
+  - {fileID: 1162553308}
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -523,7 +509,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 30
   rotationSpeed: 10
-  hideMouse: 1
+  hideMouse: 0
 --- !u!1 &1131598849
 GameObject:
   m_ObjectHideFlags: 0
@@ -569,7 +555,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isoLevel: 128
   interpolate: 1
---- !u!1 &1876185448
+--- !u!1 &1162553307
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -577,44 +563,143 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1876185449}
-  - component: {fileID: 1876185450}
+  - component: {fileID: 1162553308}
+  - component: {fileID: 1162553309}
+  - component: {fileID: 1162553314}
+  - component: {fileID: 1162553313}
+  - component: {fileID: 1162553312}
+  - component: {fileID: 1162553311}
+  - component: {fileID: 1162553310}
   m_Layer: 0
-  m_Name: NoiseGenerator
+  m_Name: NoiseManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &1876185449
+--- !u!4 &1162553308
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1876185448}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_GameObject: {fileID: 1162553307}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 642371011}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1876185450
+--- !u!114 &1162553309
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1876185448}
+  m_GameObject: {fileID: 1162553307}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cbad037a5d2c2bb49a28280c74dffa83, type: 3}
+  m_Script: {fileID: 11500000, guid: f9568358fb4a217469249723fa12e0e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  worldSeed: 1137388032
-  surfaceStart: 1
-  maxSurfaceheight: 39
+  testSize: 7
+  chunkOffset: {x: 0, y: 0}
+--- !u!114 &1162553310
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1162553307}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7273ccaa8df40dd4ead28bb0ae12586d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  terrainHeightCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  scale: 80
+  octaves: 2
+  persistance: 0.46
+  lacunarity: 2
+  maxHeightDifference: 6
+  sandDeep: 7
+--- !u!114 &1162553311
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1162553307}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf778f8e08e7a9f44b542b7976599454, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  terrainHeightCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 1
+      outSlope: 1
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 1
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  scale: 60
+  octaves: 2
+  persistance: 0.5
+  lacunarity: 2
+  maxHeightDifference: 7
+--- !u!114 &1162553312
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1162553307}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 119732525eb80e94c824d2b984aba8ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   terrainHeightCurve:
     serializedVersion: 2
     m_Curve:
@@ -630,12 +715,12 @@ MonoBehaviour:
     - serializedVersion: 3
       time: 0.8991164
       value: 0.9234049
-      inSlope: 2.8480902
-      outSlope: 2.8480902
+      inSlope: 3.6884282
+      outSlope: 3.6884282
       tangentMode: 0
       weightedMode: 0
       inWeight: 0.33333334
-      outWeight: 0.35390154
+      outWeight: 0.48347223
     - serializedVersion: 3
       time: 1
       value: 1
@@ -652,6 +737,7 @@ MonoBehaviour:
   octaves: 3
   persistance: 0.5
   lacunarity: 2
+  maxSurfaceheight: 39
   heightMatOffset: 10
   hightMatMult:
     serializedVersion: 2
@@ -704,6 +790,73 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  snowHeight: 29
+  snowHeight: 28
   rockLevel: 0.48
   dirtLevel: 0.22
+--- !u!114 &1162553313
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1162553307}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 203436860b177a54ebd749e243c194b0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  terrainHeightCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  scale: 50
+  octaves: 4
+  persistance: 0.5
+  lacunarity: 2
+  maxHeightDifference: 7
+  snowDeep: 5
+  iceNoiseScale: 14
+  iceApearValue: 0.8
+  iceMaxHeight: 8
+  IcePersistance: 0.607
+  IceLacunarity: 4.5
+--- !u!114 &1162553314
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1162553307}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cbad037a5d2c2bb49a28280c74dffa83, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  worldSeed: -591399936
+  biomeScale: 150
+  diffToMerge: 0.025
+  surfaceLevel: 8
+  octaves: 5
+  persistance: 0.1
+  lacunarity: 9
+  biomes: []

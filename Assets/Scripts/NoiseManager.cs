@@ -4,151 +4,154 @@ using UnityEngine;
 
 public class NoiseManager : Singleton<NoiseManager>
 {
-	[Header("Noise / terrain generation")]
-	[Tooltip("Seed of the world")] [Range(int.MinValue + 100, int.MaxValue - 100)]
-	public int worldSeed = 0;
-	[Tooltip("The deepest point of the surface")] [Range(1, Constants.MAX_HEIGHT)]
-	public int surfaceStart = 1;
-	[Tooltip("The highest point of the surface")] [Range(0, Constants.MAX_HEIGHT-1)]
-	public int maxSurfaceheight = Constants.MAX_HEIGHT-1;
-	[Tooltip("Animation curve for attenuate the height in some ranges")]
-	public AnimationCurve terrainHeightCurve;
-	[Tooltip("Scale of the noise map")] [Range(0.001f, 100f)]
-	public float scale = 50f;
-	[Tooltip("Number of deferents relief apply to the terrain surface")] [Range(1, 8)]
-	public int octaves = 4;
-	[Tooltip("Amplitude decrease of reliefs")] [Range(0.001f, 1f)]
-	public float persistance = 0.5f;
-	[Tooltip("Frequency increase of reliefs")] [Range(1, 20)]
-	public float lacunarity = 2f;
-	
-	[Header("Texture generation")]
-	[Tooltip("Increase the effect of the hightMatMult")][Range(1, 20f)]
-	public float heightMatOffset = 10;
-	[Tooltip("Multiplier of the slope in dependence of the height")]
-	public AnimationCurve hightMatMult;
-	[Range(0, Constants.MAX_HEIGHT)]
-	public int snowHeight = 35;
-	[Range(0, 1f)]
-	public float rockLevel = 0.6f;
-	[Range(0, 1f)]
-	public float dirtLevel = 0.25f;
 
-	private int isoLevel;
+	[Header("World configuration")]
+	[Tooltip("Seed of the world")]
+	[Range(int.MinValue + 100, int.MaxValue - 100)]
+	public int worldSeed = 0;
+	[Tooltip("Biomes sizes")]
+	public float biomeScale;
+
+	[Header("Biome merge configuration")]
+	[Tooltip("biomes.appearValue diference for merge")][Range(0.01f,0.5f)]
+	public float diffToMerge = 0.025f;
+	[Tooltip("Surface desired level, height where biomes merge")]
+	[Range(1, Constants.MAX_HEIGHT)]
+	public int surfaceLevel = Constants.MAX_HEIGHT /8;
+	[Tooltip("Octaves used in the biome noise")][Range(1, 5)]
+	public int octaves = 2;
+	[Tooltip("Amplitude decrease of reliefs,very low recommended")][Range(0.001f, 1f)]
+	public float persistance = 0.1f;
+	[Tooltip("Frequency increase of reliefs")][Range(1, 20)]
+	public float lacunarity = 9f;
+
+	[Header("Biomes Array")]
+	public BiomeProperties[] biomes;
+
+	[System.Serializable]
+	public struct BiomeProperties
+	{
+		public Biome biome;//Biome child class
+		public float appearValue;//1 to 0 value when the biome appears. Next biomePropertie.appear value is where this biome end
+	}
 
 	public void Awake()
 	{
-		isoLevel = MeshBuilder.Instance.isoLevel;
 		if (worldSeed == 0)//Generate random seed when use 0
 			worldSeed = Random.Range(int.MinValue, int.MaxValue);
+		if(biomes.Length == 0)
+		{
+			Biome[] biomeArray = GetComponents<Biome>();
+			biomes = new BiomeProperties[biomeArray.Length];
+			for (int i = 0; i< biomeArray.Length; i++)
+			{
+				biomes[i].biome = biomeArray[i];
+				biomes[i].appearValue = (float)(biomeArray.Length-i) / biomeArray.Length;
+			}
+		}
 
 	}
 
-	/// <summary>
-	/// Generate the data of the chunk using the values of the manager.
-	/// </summary>
 	public byte[] GenerateChunkData(Vector2Int vecPos)
 	{
 		byte[] chunkData = new byte[Constants.CHUNK_BYTES];
-		float[] noise = GenerateNoiseMap(scale, octaves, persistance, lacunarity, vecPos);
-		float maxSlope = 0;
-		float minSlope = 100;
-		for (int z = 1; z < Constants.CHUNK_VERTEX_SIZE+1; z++)//start a 1 because the noise start at -1 of the chunk vertex
+
+		float[] biomeNoise = GenerateNoiseMap(biomeScale * biomes.Length,octaves,persistance,lacunarity, vecPos);//Biomes noise (0-1) of each (x,z) position
+		float[] mergeBiomeTable;//Value(0-1) of merged with other biomes in a (x,z) position
+		int[] biomeTable = GetChunkBiomes(biomeNoise, out mergeBiomeTable);//biomes index in the array of BiomeProperties
+
+		/*for(int i= 0; i< mergeBiomeTable.Length;i++)
 		{
-			for (int x = 1; x < Constants.CHUNK_VERTEX_SIZE+1; x++)//start a 1 because the noise start at -1 of the chunk vertex
+			if(mergeBiomeTable[i] != 1)
 			{
-				// Get surface height of the x,z position 
-				float height = terrainHeightCurve.Evaluate(noise[x + z * (Constants.CHUNK_VERTEX_SIZE+2)]) * (maxSurfaceheight - surfaceStart) + surfaceStart;
-				int heightY = Mathf.CeilToInt(height);//Vertex Y where surface start
-				int lastVertexWeigh = (int)((255 - isoLevel) * (height % 1) + isoLevel);//Weigh of the last vertex
-				float slope = CalculateSlope(x,z,noise);
+				Debug.Log(mergeBiomeTable[i]);
+			}
+		}*/
 
-				if (maxSlope < slope)
-					maxSlope = slope;
-				if (minSlope > slope)
-					minSlope = slope;
 
-				//Debug.Log(x + "|" + z + "= " + slope);
+		byte[][] biomesData = new byte[biomes.Length][];//Data generate from biomes.biome.GenerateChunkData()
+
+		for (int x= 0;  x< Constants.CHUNK_VERTEX_SIZE; x++)
+		{
+			for(int z=0; z<Constants.CHUNK_VERTEX_SIZE; z++)
+			{
+				int index = x + z * Constants.CHUNK_VERTEX_SIZE;
+				if (biomesData[biomeTable[index]] == null)
+				{
+					biomesData[biomeTable[index]] = biomes[biomeTable[index]].biome.GenerateChunkData(vecPos, mergeBiomeTable);
+				}
 
 				for (int y = 0; y < Constants.CHUNK_VERTEX_HEIGHT; y++)
 				{
-					int index = ((x-1) + (z-1) * Constants.CHUNK_VERTEX_SIZE + y * Constants.CHUNK_VERTEX_AREA) * Constants.CHUNK_POINT_BYTE;//apply x-1 and z-1 for get the correct index
-					if (y < heightY-5)
-					{
-						chunkData[index] = 255;
-						chunkData[index + 1] = 4;//Rock
-					}
-					else if (y < heightY)
-					{
-						chunkData[index] = 255;
-						if (slope > rockLevel)
-							chunkData[index + 1] = 4;//Rock
-						else if(slope < dirtLevel && y > snowHeight)//Avoid dirt in snow areas
-							chunkData[index + 1] = 3;
-						else
-							chunkData[index + 1] = 1;//dirt
-					}
-					else if (y == heightY)//ESTO ES UN ==
-					{
-						chunkData[index] = (byte)lastVertexWeigh;//
-						if (slope > rockLevel)
-							chunkData[index + 1] = 4;//Mountain Rock
-						else if (slope > dirtLevel)
-							chunkData[index + 1] = 1;//dirt
-						else
-						{
-							if(y > snowHeight)
-								chunkData[index + 1] = 3;//snow
-							else
-								chunkData[index + 1] = 0;//grass
-						}
-							
-					}
-					else
-					{
-						chunkData[index] = 0;
-						chunkData[index + 1] = Constants.NUMBER_MATERIALS;
-					}
+					int chunkByteIndex = (index + y * Constants.CHUNK_VERTEX_AREA) * Constants.CHUNK_POINT_BYTE;
+					chunkData[chunkByteIndex] = biomesData[biomeTable[index]][chunkByteIndex];
+					chunkData[chunkByteIndex+1] = biomesData[biomeTable[index]][chunkByteIndex+1];
 				}
 			}
 		}
-		//Debug.Log(minSlope +" > " + maxSlope);
+
 		return chunkData;
 
 	}
 
-	
 	/// <summary>
-	/// Function that calculate the slope of the terrain
+	/// Get the index from the biomes array, the bool out is for get the merge biome
 	/// </summary>
-	private float CalculateSlope(int x, int z, float[] noise)
+	private int[] GetChunkBiomes(float[] noise, out float[] mergeBiome)
 	{
-		float maxValue = 0;
-		float minValue = 100;
-		for(int xOffset = x-1; xOffset <= x+1; xOffset += 1)
+		float[] mergeBiomeTable= new float[Constants.CHUNK_VERTEX_AREA];//value of merge with other biome, 1 = nothing, 0 full merge
+		int[] biomeTable = new int[Constants.CHUNK_VERTEX_AREA];//Value with the index of the biomes of each (x,z) position
+		for (int z = 0; z< Constants.CHUNK_VERTEX_SIZE; z++)
 		{
-			for (int zOffset = z-1; zOffset <= z+1; zOffset += 1)
+			for (int x = 0; x < Constants.CHUNK_VERTEX_SIZE; x++)
 			{
-				float value =terrainHeightCurve.Evaluate(noise[xOffset + zOffset * (Constants.CHUNK_VERTEX_SIZE + 2)]);
-				if (value > maxValue)
-					maxValue = value;
-				if (value < minValue)
-					minValue = value;
+				int index = x + z * Constants.CHUNK_VERTEX_SIZE;
+				for (int i = biomes.Length - 1; i >= 0; i--)
+				{
+					if (noise[index] < biomes[i].appearValue)
+					{
+						if (i != 0 && diffToMerge + noise[index] > biomes[i].appearValue)//Biome merged with top biome
+						{
+							mergeBiomeTable[index] = (biomes[i].appearValue - noise[index]) / diffToMerge;
+							//Debug.Log("TOP: "+biomes[i].appearValue + " - " + noise[index] + " / " + diffToMerge + " = " + mergeBiomeTable[index]);
+						}
+
+						else if (i != biomes.Length - 1 && diffToMerge - noise[index] < biomes[i+1].appearValue)//Biome merged with bottom biome
+						{
+							mergeBiomeTable[index] = (noise[index] - biomes[i + 1].appearValue) / diffToMerge;
+							//Debug.Log("BOT: "+noise[index] + " - " + biomes[i + 1].appearValue + " / " + diffToMerge + " = " + mergeBiomeTable[index]);
+						}
+
+						else
+							mergeBiomeTable[index] = 1;//No biome merge needed
+
+
+						/*if(noise[index]+ diffToMerge > 0.5f || noise[index] - diffToMerge < 0.5f)
+						{
+							Debug.Log(noise[index] + " " + mergeBiomeTable[index]);
+						}*/
+
+						biomeTable[index] = i;
+						break;//We get the texture, we exit from texture loop( i loop)
+
+					}
+				}
 			}
 		}
-		float pointValue = terrainHeightCurve.Evaluate(noise[x + z * (Constants.CHUNK_VERTEX_SIZE + 2)]);
-		return (1- (minValue / pointValue) ) * (hightMatMult.Evaluate(pointValue) * heightMatOffset); ;
+
+		mergeBiome = mergeBiomeTable;
+		return biomeTable;
 	}
 
 
 	/// <summary>
-	/// Calculate the PerlinNoise used in the relief generation.
+	/// Calculate the PerlinNoise used in the relief generation, only the chunk size (no slope calculation).
 	/// </summary>
-	public float[] GenerateNoiseMap (float scale, int octaves, float persistance, float lacunarity, Vector2Int offset)
+	public static float[] GenerateNoiseMap (float scale, int octaves, float persistance, float lacunarity, Vector2Int offset)
 	{
-		float[] noiseMap = new float[(Constants.CHUNK_VERTEX_SIZE + 2) * (Constants.CHUNK_VERTEX_SIZE + 2)];//Size of vertex + all next borders (For the slope calculation)
+		float[] noiseMap = new float[Constants.CHUNK_VERTEX_AREA];//Size of vertex + all next borders (For the slope calculation)
 
-		System.Random random = new System.Random(worldSeed);//Used System.random, because unity.Random is global, can cause problems if there is other random running in other script
+		System.Random random = new System.Random(NoiseManager.Instance.worldSeed);//Used System.random, because unity.Random is global, can cause problems if there is other random running in other script
 		Vector2[] octaveOffsets = new Vector2[octaves];
 
 		float maxPossibleHeight = 0;
@@ -157,8 +160,8 @@ public class NoiseManager : Singleton<NoiseManager>
 
 		for (int i = 0; i < octaves; i++)
 		{
-			float offsetX = random.Next(-100000, 100000) + offset.x * Constants.CHUNK_SIZE-1;
-			float offsetY = random.Next(-100000, 100000) + offset.y * Constants.CHUNK_SIZE-1;
+			float offsetX = random.Next(-100000, 100000) + offset.x * Constants.CHUNK_SIZE;
+			float offsetY = random.Next(-100000, 100000) + offset.y * Constants.CHUNK_SIZE;
 			octaveOffsets[i] = new Vector2(offsetX, offsetY);
 
 			maxPossibleHeight += amplitude;
@@ -167,9 +170,9 @@ public class NoiseManager : Singleton<NoiseManager>
 
 		float halfVertexArea = Constants.CHUNK_VERTEX_SIZE / 2f;
 
-		for (int z = 0; z < Constants.CHUNK_VERTEX_SIZE+2; z++)
+		for (int z = 0; z < Constants.CHUNK_VERTEX_SIZE; z++)
 		{
-			for (int x = 0; x < Constants.CHUNK_VERTEX_SIZE+2; x++)
+			for (int x = 0; x < Constants.CHUNK_VERTEX_SIZE; x++)
 			{
 				amplitude = 1;
 				frequency = 1;
@@ -187,8 +190,94 @@ public class NoiseManager : Singleton<NoiseManager>
 					frequency *= lacunarity;
 				}
 				
-				noiseMap[x + z *(Constants.CHUNK_VERTEX_SIZE+2)] = noiseHeight / (maxPossibleHeight * 0.9f);//*0.9 because reach the max points it's really dificult.
+				noiseMap[x + z * Constants.CHUNK_VERTEX_SIZE] = noiseHeight / (maxPossibleHeight * 0.9f);//*0.9 because reach the max points it's really dificult.
 
+			}
+		}
+
+		return noiseMap;
+	}
+
+	/// <summary>
+	/// Calculate the PerlinNoise used in the relief generation, with a extra edge in each side of the chunk, for the slope calculations.
+	/// </summary>
+	public static float[] GenerateExtendedNoiseMap(float scale, int octaves, float persistance, float lacunarity, Vector2Int offset)
+	{
+		float[] noiseMap = new float[(Constants.CHUNK_VERTEX_SIZE + 2) * (Constants.CHUNK_VERTEX_SIZE + 2)];//Size of vertex + all next borders (For the slope calculation)
+
+		System.Random random = new System.Random(NoiseManager.Instance.worldSeed);//Used System.random, because unity.Random is global, can cause problems if there is other random running in other script
+		Vector2[] octaveOffsets = new Vector2[octaves];
+
+		float maxPossibleHeight = 0;
+		float amplitude = 1;
+		float frequency = 1;
+
+		for (int i = 0; i < octaves; i++)
+		{
+			float offsetX = random.Next(-100000, 100000) + offset.x * Constants.CHUNK_SIZE - 1;
+			float offsetY = random.Next(-100000, 100000) + offset.y * Constants.CHUNK_SIZE - 1;
+			octaveOffsets[i] = new Vector2(offsetX, offsetY);
+
+			maxPossibleHeight += amplitude;
+			amplitude *= persistance;
+		}
+
+		float halfVertexArea = Constants.CHUNK_VERTEX_SIZE / 2f;
+
+		for (int z = 0; z < Constants.CHUNK_VERTEX_SIZE + 2; z++)
+		{
+			for (int x = 0; x < Constants.CHUNK_VERTEX_SIZE + 2; x++)
+			{
+				amplitude = 1;
+				frequency = 1;
+				float noiseHeight = 0;
+
+				for (int i = 0; i < octaves; i++)
+				{
+					float sampleX = (x - halfVertexArea + octaveOffsets[i].x) / scale * frequency;
+					float sampleY = (z - halfVertexArea + octaveOffsets[i].y) / scale * frequency;
+
+					float perlinValue = Mathf.PerlinNoise(sampleX, sampleY);
+					noiseHeight += perlinValue * amplitude;
+
+					amplitude *= persistance;
+					frequency *= lacunarity;
+				}
+
+				noiseMap[x + z * (Constants.CHUNK_VERTEX_SIZE + 2)] = noiseHeight / (maxPossibleHeight * 0.9f);//*0.9 because reach the max points it's really dificult.
+
+			}
+		}
+
+		return noiseMap;
+	}
+
+	/// <summary>
+	/// Similar that GenerateNoiseMap but use only one octave, for that reason use less parameters and less operations
+	/// </summary>
+	public static float[] GenenerateSimpleNoiseMap(float scale, Vector2Int offset)
+	{
+		float[] noiseMap = new float[Constants.CHUNK_VERTEX_AREA];//Size of vertex + all next borders (For the slope calculation)
+
+		System.Random random = new System.Random(NoiseManager.Instance.worldSeed);//Used System.random, because unity.Random is global, can cause problems if there is other random running in other script
+
+		float maxPossibleHeight = 0;
+		float amplitude = 1;
+		float frequency = 1;
+
+		float offsetX = random.Next(-100000, 100000) + offset.x * Constants.CHUNK_SIZE ;
+		float offsetY = random.Next(-100000, 100000) + offset.y * Constants.CHUNK_SIZE ;
+
+		float halfVertexArea = Constants.CHUNK_VERTEX_SIZE / 2f;
+
+		for (int z = 0; z < Constants.CHUNK_VERTEX_SIZE; z++)
+		{
+			for (int x = 0; x < Constants.CHUNK_VERTEX_SIZE; x++)
+			{
+				float sampleX = (x - halfVertexArea + offsetX) / scale;
+				float sampleY = (z - halfVertexArea + offsetY) / scale;
+
+				noiseMap[x + z * Constants.CHUNK_VERTEX_SIZE] = Mathf.PerlinNoise(sampleX, sampleY);
 			}
 		}
 
