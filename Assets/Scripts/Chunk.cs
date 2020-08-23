@@ -30,7 +30,7 @@ public class Chunk : MonoBehaviour
         Mesh myMesh = MeshBuilder.Instance.BuildChunk(b);
         GetComponent<MeshFilter>().mesh = myMesh;
 
-        //Assign random color
+        //Assign random color, new material each chunk.
         //mat mymaterial = new mat(Shader.Find("Custom/Geometry/FlatShading"));//Custom/DoubleFaceShader  |   Specular
         //mymat.color = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
         GetComponent<MeshRenderer>().material = ChunkManager.Instance.terrainMaterial;

@@ -1,19 +1,20 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Collections;
+using Unity.Mathematics;
 
 public static class Constants
 {
     #region configurable variables
     public const int CHUNK_SIZE = 16; //Number voxel per side
-    public const int MAX_HEIGHT = 40; //Number of voxel of height in a chunk, pair number recommended
+    public const int MAX_HEIGHT = 255; //Number of voxel of height in a chunk, pair number recommended
     public const float VOXEL_SIDE = 1; //Size of a side of a voxel
 
     public const int REGION_SIZE = 32; //Number chunk per side. If change REGION_SIZE maybe you need change REGION_HEADER.
     public const int REGION_LOOKTABLE_POS_BYTE = 2; //Number of byte needed for represent (REGION_SIZE * REGION_SIZE) +1. Example: (32 x 32) +1= 1025 = 2 bytes needed.  MAX = 4.
 
-    //For change the type of shading, flatShading or normal. Change the define of the MeshBuilder.cs, in the line 4.
-    public const int NUMBER_MATERIALS = 9; //Total number of different materials, max = 255 = 1 byte
+    public const int NUMBER_MATERIALS = 9; //Total number of different materials, max = 256 = 1 byte
     public const int MATERIAL_FOR_ROW = 3; //Number of materials in a row of the texture
 
     public const bool SAVE_GENERATED_CHUNKS = false; //False, no save unmodified chunks, use seed to generate again the next time (-File size -save time +Generation cost). True, generated chunk are saved in the memory (+File size +save time -Generation cost ) 
@@ -50,7 +51,7 @@ public static class Constants
 
     #region mesh building
     //Mesh build tables
-    public static int[] edgeTable ={
+    public static readonly int[] edgeTable ={
         0x0  , 0x109, 0x203, 0x30a, 0x406, 0x50f, 0x605, 0x70c,
         0x80c, 0x905, 0xa0f, 0xb06, 0xc0a, 0xd03, 0xe09, 0xf00,
         0x190, 0x99 , 0x393, 0x29a, 0x596, 0x49f, 0x795, 0x69c,
@@ -84,7 +85,7 @@ public static class Constants
         0xf00, 0xe09, 0xd03, 0xc0a, 0xb06, 0xa0f, 0x905, 0x80c,
         0x70c, 0x605, 0x50f, 0x406, 0x30a, 0x203, 0x109, 0x0   };
 
-    public static int[,] triTable =
+    public static readonly int[,] triTable =
         {{-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
         {0, 8, 3, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
         {0, 1, 9, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
@@ -342,7 +343,7 @@ public static class Constants
         {0, 3, 8, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
         {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1}};
 
-    public static int[] cornerIndexAFromEdge = {
+    public static readonly int[] cornerIndexAFromEdge = {
         0,
         1,
         2,
@@ -357,7 +358,7 @@ public static class Constants
         3
     };
 
-    public static int[] cornerIndexBFromEdge = {
+    public static readonly int[] cornerIndexBFromEdge = {
         1,
         2,
         3,
@@ -372,4 +373,5 @@ public static class Constants
         7
     };
     #endregion
+
 }

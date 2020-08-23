@@ -96,6 +96,7 @@ LightmapSettings:
     m_PVRFilteringAtrousPositionSigmaAO: 1
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
+    m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
   m_UseShadowmask: 1
 --- !u!196 &4
@@ -145,8 +146,9 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 219536569}
   m_Enabled: 1
-  serializedVersion: 9
+  serializedVersion: 10
   m_Type: 1
+  m_Shape: 0
   m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
   m_Intensity: 0.5
   m_Range: 10
@@ -236,8 +238,9 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 507559756}
   m_Enabled: 1
-  serializedVersion: 9
+  serializedVersion: 10
   m_Type: 1
+  m_Shape: 0
   m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
   m_Intensity: 0.5
   m_Range: 10
@@ -312,7 +315,7 @@ GameObject:
   m_Component:
   - component: {fileID: 642371011}
   m_Layer: 0
-  m_Name: '--- Singletons ---'
+  m_Name: --- Singletons ---
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -365,7 +368,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   terrainMaterial: {fileID: 2100000, guid: e5e158f8f9cada14380f5755c6cef11c, type: 2}
-  chunkViewDistance: 7
+  chunkViewDistance: 6
   chunkMantainDistance: 0.3
 --- !u!4 &697465278
 Transform:
@@ -830,6 +833,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a71d4d4994b362a4e8d7d105e9c0f33a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  timerTotal: 0
+  timerNum: 0
   isoLevel: 128
   interpolate: 1
 --- !u!1 &1712057809
@@ -1049,6 +1054,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
