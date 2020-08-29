@@ -1,5 +1,5 @@
 # Marching-cubes-en-Unity-3D
-Terrain voxel engine with the use of Marching Cubes.
+Terrain voxel engine with the use of Marching Cubes implemented in Unity 2019.4.8f1.
 
 ![GifEdition](https://user-images.githubusercontent.com/58559223/91642654-6b216500-ea2d-11ea-8f30-cee65a9864c1.gif)
 
@@ -77,14 +77,15 @@ Chunk manager ("ChunkManager"):
 * Chunk maintain distance: Distance extra for destroy inactive chunks, this chunks consume ram, but load faster.
 
 ## Biome system<a name="biomeSystem"></a>
-The biome system allow you to generate different types of terrain generated in the infinite world. It used a value between 1 and 0 where each biome has appear range, so each biome can have 1 or 2 possible neighbors biomes. Some examples of the biome system and the biomes:
+The biome system allow you to generate different types of terrain generated in the infinite world. It used a value between 1 and 0 where each biome has appear range, so each biome can have 1 or 2 possible neighbors biomes.
+
+Desert-mountains biome and the "NoiseManager" with the biomes:
 
 ![Biome frontier](https://user-images.githubusercontent.com/58559223/91642278-555e7080-ea2a-11ea-9aa9-d8181c0b4b9c.png)
 
-<img width="50%" src="https://user-images.githubusercontent.com/58559223/91642267-424ba080-ea2a-11ea-8eaf-1f599a2e55f2.png">
-<img width="47.6%" src="https://user-images.githubusercontent.com/58559223/91642271-4a0b4500-ea2a-11ea-916c-7b48419fd506.png">
+Ice biome and plains biome:
+![ice-grass biomes](https://user-images.githubusercontent.com/58559223/91643239-b9386780-ea31-11ea-833e-7a63fc70727e.png)
 
-</br>
 </br>
 
 ### Edit biomes<a name="subparagraph4-1"></a>
