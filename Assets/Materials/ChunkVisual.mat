@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: ColorCull
-  m_Shader: {fileID: 4800000, guid: b9bb7a7290108234aa3dcd06fe578493, type: 3}
+  m_Name: ChunkVisual
+  m_Shader: {fileID: 4800000, guid: 6c18b9cf2cb49344a940b4495c86efc0, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -60,7 +60,6 @@ Material:
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
-    - _FillHeight: 0.2
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
@@ -68,20 +67,11 @@ Material:
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
-    - _Shininess: 0.078125
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
-    - _Transparency: 0.292
     - _UVSec: 0
-    - _WireSmoothness: 3
-    - _WireThickness: 300
     - _ZWrite: 1
     m_Colors:
-    - _BackColor: {r: 0.25, g: 0.9323157, b: 1, a: 1}
-    - _BaseColor: {r: 1, g: 0.43867922, b: 0.43867922, a: 1}
-    - _Color: {r: 1, g: 0.52380437, b: 0.3537736, a: 1}
+    - _Color: {r: 0.9150943, g: 0.9150943, b: 0.9150943, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _SpecColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
-    - _TintColor: {r: 1, g: 1, b: 1, a: 1}
-    - _WireColor: {r: 0, g: 0, b: 0, a: 1}

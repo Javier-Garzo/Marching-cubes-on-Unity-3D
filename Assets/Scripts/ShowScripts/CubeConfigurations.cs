@@ -1,11 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CubeConfigurations : MonoBehaviour
 {
     public float rotSpeed = 40;
-    public Material faceMaterial;
+    public Text indicationText;
+    public int actualMaterial = 1;
+    public Material[] faceMaterials;
     private GameObject[] configurationObj;
     private MeshBuilder meshBuilder;
     private int[][] status = {
@@ -55,9 +58,21 @@ public class CubeConfigurations : MonoBehaviour
         {
             configurationObj[i].transform.Rotate(0, rotSpeed * Time.deltaTime, 0);
         }
+        if (Input.GetAxis("Mouse ScrollWheel") > 0 && actualMaterial!= faceMaterials.Length-1)
+        {
+            actualMaterial++;
+            changeTextures();
+        }
+        else if (Input.GetAxis("Mouse ScrollWheel") < 0 && actualMaterial  != 0)
+        {
+            actualMaterial--;
+            changeTextures();
+        }
     }
-    
-    //Function to help to create a cube
+
+    /// <summary>
+    /// Function to help to create a cube
+    /// </summary>
     public GameObject generateConfiguration(Vector3 translation, int[] vertexStatus)
     {
          Vector4[] cube = {
@@ -80,11 +95,34 @@ public class CubeConfigurations : MonoBehaviour
         Mesh myMesh = meshBuilder.buildMesh(meshBuilder.CalculateVertex(cube));
 
         cubeObj.GetComponent<MeshFilter>().mesh = myMesh;
-        cubeObj.GetComponent<MeshRenderer>().material = faceMaterial;
+        cubeObj.GetComponent<MeshRenderer>().material = faceMaterials[actualMaterial];
 
 
         return cubeObj;
 
+    }
+
+    /// <summary>
+    /// Change texture of the example voxels
+    /// </summary>
+    private void changeTextures()
+    {
+        for(int i= 0; i< configurationObj.Length;i++)
+        {
+            configurationObj[i].GetComponent<MeshRenderer>().material = faceMaterials[actualMaterial];
+        }
+        switch(actualMaterial)
+        {
+            case 0:
+                indicationText.text = "    One face shader: Show the front face of the voxel with a wireframe effect.";
+                break;
+            case 1:
+                indicationText.text = "    Two face shader: Show the front and back face (curl off) of the voxel with a wireframe effect in both sides.";
+                break;
+            case 2:
+                indicationText.text = "    Color cull shader: show front faces with a red color and back faces with a blue color. (The blue faces don't render in normal cases)";
+                break;
+        }
     }
 
     //draw cubes

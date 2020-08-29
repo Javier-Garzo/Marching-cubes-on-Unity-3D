@@ -8,8 +8,12 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: NormalTerrain
-  m_Shader: {fileID: 4800000, guid: fa2f02855464b484f8ba84397c3322ef, type: 3}
-  m_ShaderKeywords: 
+  m_Shader: {fileID: 4800000, guid: 365ec3c4dfbd50f48b3b261af9673b93, type: 3}
+  m_ShaderKeywords: AO_ON TEXTUREMODULE_ON _AOUV_UV0 _GRADIENTSPACE_WORLD_SPACE _GRADSETTINGS_B_USE_GLOBAL
+    _GRADSETTINGS_D_USE_GLOBAL _GRADSETTINGS_F_USE_GLOBAL _GRADSETTINGS_L_USE_GLOBAL
+    _GRADSETTINGS_R_USE_GLOBAL _GRADSETTINGS_T_USE_GLOBAL _LMAPBLENDINGMODE_ADD _MODE_OPAQUE
+    _SHADING_B_VERTEX_COLOR _SHADING_D_VERTEX_COLOR _SHADING_F_VERTEXCOLOR _SHADING_L_VERTEX_COLOR
+    _SHADING_R_VERTEX_COLOR _SHADING_T_VERTEX_COLOR
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 1
@@ -19,6 +23,10 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - _AOTexture:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _BumpMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -43,6 +51,10 @@ Material:
         m_Texture: {fileID: 2800000, guid: 05fb3e62c4ba3454181e8ebc257da85f, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _MainTexture:
+        m_Texture: {fileID: 2800000, guid: 05fb3e62c4ba3454181e8ebc257da85f, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -55,24 +67,131 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _Ramp:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _TerrainHolesTexture:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Floats:
+    - _AOEnable: 0
+    - _AOPower: 1
+    - _AOuv: 0
+    - _AmbientPower: 0
+    - _Brightness: 0
     - _BumpScale: 1
+    - _ColorCorrectionEnable: 0
+    - _Cull: 2
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
+    - _DontMix: 0
     - _DstBlend: 0
+    - _Fade: 1
+    - _FogHeight: 10
+    - _FogYStartPos: 0
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
+    - _GradSettings_B: 0
+    - _GradSettings_D: 0
+    - _GradSettings_F: 0
+    - _GradSettings_L: 0
+    - _GradSettings_R: 0
+    - _GradSettings_T: 0
+    - _GradientHeight_B: 1
+    - _GradientHeight_D: 1
+    - _GradientHeight_F: 1
+    - _GradientHeight_G: 1
+    - _GradientHeight_L: 1
+    - _GradientHeight_R: 1
+    - _GradientHeight_T: 1
+    - _GradientSpace: 0
+    - _HFogEnable: 0
+    - _LMPower: 1
+    - _LmapBlendingMode: 0
+    - _LmapEnable: 0
+    - _MainTexturePower: 0
     - _Metallic: 0
-    - _MinLight: 0.05
+    - _MinLight: -0.09
     - _Mode: 0
     - _OcclusionStrength: 1
+    - _OtherSettings: 1
     - _Parallax: 0.02
+    - _RealtimeShadow: 0
+    - _RimEnable: 0
+    - _RimPower: 1
+    - _Rotation_B: 0
+    - _Rotation_D: 0
+    - _Rotation_F: 0
+    - _Rotation_G: 0
+    - _Rotation_L: 0
+    - _Rotation_R: 0
+    - _Rotation_T: 0
+    - _Saturation: 0
+    - _Shading_B: 0
+    - _Shading_D: 0
+    - _Shading_F: 0
+    - _Shading_L: 0
+    - _Shading_R: 0
+    - _Shading_T: 0
+    - _ShadowAmount: 0.8
+    - _ShadowBlend: 0
+    - _ShadowInfluence: 0
+    - _ShowAO: 0
+    - _ShowAmbientSettings: 0
+    - _ShowBack: 0
+    - _ShowBottom: 0
+    - _ShowColorCorrection: 0
+    - _ShowCustomShading: 1
+    - _ShowFog: 0
+    - _ShowFront: 0
+    - _ShowGlobalGradientSettings: 0
+    - _ShowLMap: 0
+    - _ShowLeft: 0
+    - _ShowRight: 0
+    - _ShowTexture: 1
+    - _ShowTop: 0
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _UVSec: 0
+    - _UnityFogEnable: 0
     - _ZWrite: 1
+    - _ZWriteOverride: 0
     m_Colors:
+    - _AOColor: {r: 0, g: 0, b: 0, a: 1}
+    - _AmbientColor: {r: 0.4, g: 0.4, b: 0.4, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Color1_B: {r: 1, g: 1, b: 1, a: 1}
+    - _Color1_D: {r: 1, g: 1, b: 1, a: 1}
+    - _Color1_F: {r: 1, g: 1, b: 1, a: 1}
+    - _Color1_L: {r: 1, g: 1, b: 1, a: 1}
+    - _Color1_R: {r: 1, g: 1, b: 1, a: 1}
+    - _Color1_T: {r: 1, g: 1, b: 1, a: 1}
+    - _Color2_B: {r: 1, g: 1, b: 1, a: 1}
+    - _Color2_D: {r: 1, g: 1, b: 1, a: 1}
+    - _Color2_F: {r: 1, g: 1, b: 1, a: 1}
+    - _Color2_L: {r: 1, g: 1, b: 1, a: 1}
+    - _Color2_R: {r: 1, g: 1, b: 1, a: 1}
+    - _Color2_T: {r: 1, g: 1, b: 1, a: 1}
+    - _Color_Fog: {r: 0.5, g: 0.5, b: 0.5, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _GizmoPosition_B: {r: 0, g: 0, b: 10, a: 10}
+    - _GizmoPosition_D: {r: 0, g: 0, b: 10, a: 10}
+    - _GizmoPosition_F: {r: 0, g: 0, b: 10, a: 10}
+    - _GizmoPosition_L: {r: 0, g: 0, b: 10, a: 10}
+    - _GizmoPosition_R: {r: 0, g: 0, b: 10, a: 10}
+    - _GizmoPosition_T: {r: 0, g: 0, b: 10, a: 10}
+    - _GradientXStartPos_D: {r: 0, g: 0, b: 0, a: 0}
+    - _GradientXStartPos_T: {r: 0, g: 0, b: 0, a: 0}
+    - _GradientYStartPos_B: {r: 0, g: 0, b: 0, a: 0}
+    - _GradientYStartPos_F: {r: 0, g: 0, b: 0, a: 0}
+    - _GradientYStartPos_G: {r: 0, g: 0, b: 0, a: 0}
+    - _GradientYStartPos_L: {r: 0, g: 0, b: 0, a: 0}
+    - _GradientYStartPos_R: {r: 0, g: 0, b: 0, a: 0}
+    - _LMColor: {r: 0, g: 0, b: 0, a: 1}
+    - _RimColor: {r: 0, g: 0, b: 0, a: 1}
+    - _ShadowColor: {r: 0, g: 0, b: 0, a: 1}
+    - _TintColor: {r: 0, g: 0, b: 0, a: 1}

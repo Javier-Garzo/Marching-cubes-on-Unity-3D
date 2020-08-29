@@ -36,7 +36,7 @@ public class ChunkManager : Singleton<ChunkManager>
         CalculateDistances();
         if (!Directory.Exists(Application.persistentDataPath + Region.REGION_DIRECTORY))//Check folder /chunks exists, if not create it
             Directory.CreateDirectory(Application.persistentDataPath + Region.REGION_DIRECTORY);
-        initRegion(0,0);
+        initRegion(Mathf.FloorToInt(player.position.x / loadRegionDistance), Mathf.FloorToInt(player.position.z/ loadRegionDistance));
     }
 
     /// <summary>

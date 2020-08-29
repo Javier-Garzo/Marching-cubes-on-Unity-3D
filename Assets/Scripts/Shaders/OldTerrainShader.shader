@@ -1,8 +1,5 @@
-﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
-
-
-// Modification of Shader from http://www.shaderslab.com/demo-90---flat-shading.html
-Shader "Custom/Geometry/TerrainShading"
+﻿// Modification of Shader from http://www.shaderslab.com/demo-90---flat-shading.html
+Shader "Custom/Geometry/OldTerrainShader"
 {
     Properties
     {

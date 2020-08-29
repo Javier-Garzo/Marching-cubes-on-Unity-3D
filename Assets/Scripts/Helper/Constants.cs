@@ -8,17 +8,17 @@ public static class Constants
 {
     #region configurable variables
     public const int CHUNK_SIZE = 16; //Number voxel per side
-    public const int MAX_HEIGHT = 255; //Number of voxel of height in a chunk, pair number recommended
+    public const int MAX_HEIGHT = 80; //Number of voxel of height in a chunk, pair number recommended
     public const float VOXEL_SIDE = 1; //Size of a side of a voxel
 
-    public const int REGION_SIZE = 32; //Number chunk per side. If change REGION_SIZE maybe you need change REGION_HEADER.
+    public const int REGION_SIZE = 32; //Number chunk per side. If change REGION_SIZE maybe you need change REGION_LOOKTABLE_POS_BYTE.
     public const int REGION_LOOKTABLE_POS_BYTE = 2; //Number of byte needed for represent (REGION_SIZE * REGION_SIZE) +1. Example: (32 x 32) +1= 1025 = 2 bytes needed.  MAX = 4.
 
     public const int NUMBER_MATERIALS = 9; //Total number of different materials, max = 256 = 1 byte
     public const int MATERIAL_FOR_ROW = 3; //Number of materials in a row of the texture
 
     public const bool SAVE_GENERATED_CHUNKS = false; //False, no save unmodified chunks, use seed to generate again the next time (-File size -save time +Generation cost). True, generated chunk are saved in the memory (+File size +save time -Generation cost ) 
-    public const bool REGION_SAVE_COMPRESSED = true; //Compress the region files. -File size +CPU cost of save a file. RECOMMENDED: TRUE
+    public const bool REGION_SAVE_COMPRESSED = true; //Compress the .reg files. -File size +CPU cost of save a file. RECOMMENDED: TRUE
 
     #endregion
 

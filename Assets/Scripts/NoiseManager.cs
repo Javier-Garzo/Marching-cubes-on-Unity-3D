@@ -13,19 +13,19 @@ public class NoiseManager : Singleton<NoiseManager>
 	public float biomeScale;
 
 	[Header("Biome merge configuration")]
-	[Tooltip("biomes.appearValue diference for merge")][Range(0.01f,0.5f)]
+	[Tooltip("biomes.appearValue difference for merge")][Range(0.01f,0.5f)]
 	public float diffToMerge = 0.025f;
 	[Tooltip("Surface desired level, height where biomes merge")]
 	[Range(1, Constants.MAX_HEIGHT)]
 	public int surfaceLevel = Constants.MAX_HEIGHT /8;
 	[Tooltip("Octaves used in the biome noise")][Range(1, 5)]
 	public int octaves = 2;
-	[Tooltip("Amplitude decrease of reliefs,very low recommended")][Range(0.001f, 1f)]
+	[Tooltip("Amplitude decrease of biomes per octave,very low recommended")][Range(0.001f, 1f)]
 	public float persistance = 0.1f;
-	[Tooltip("Frequency increase of reliefs")][Range(1, 20)]
+	[Tooltip("Frequency increase of biomes per octave")][Range(1, 20)]
 	public float lacunarity = 9f;
 
-	[Header("Biomes Array")]
+	[Header("Biomes Array")]// Empty for get all Biomes of inside the GameObject
 	public BiomeProperties[] biomes;
 
 	[System.Serializable]
