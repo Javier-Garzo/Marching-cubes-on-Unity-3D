@@ -29,11 +29,11 @@ The unity project is a implementation of the algorithm [Marching Cubes](http://p
 
 ## Unity scenes <a name="unityScenes"></a>
 The unity project have a total of 5 different scenes:
-* 15Configuration: Show the 15 possible voxel configurations (use gizmos for visualize the cube area of each voxel).
-* 256 cases to 15 reduction: A example of how different type of vertex states (vertex of the voxel is inside or outside the figure) generate the same mesh (use gizmos for visualize the cube area of each voxel).
-* FirstPersonLevel: An example of a first person level and the recommended level for test the project. Load/generate a terrain where you can add voxels with the left click and remove voxels the right click.
+* 15Configuration: Show the 15 possible voxel configurations (use gizmos for visualize the cube area of each voxel). 
+* 256 cases to 15 reduction: A example of how different type of vertex states (vertex of the voxel is inside or outside the figure) generate the same mesh (use gizmos for visualize the cube area of each voxel). Controls: AWSD, mause and + - keys.
+* FirstPersonLevel: An example of a first person level and the recommended level for test the project. Load/generate a terrain where you can add voxels with the left click and remove voxels the right click. Controls: AWSD, mause and + - keys.
 * ChunkVisualization: Similar to FirstPersonLevel but the generated terrain use a material that give each chunk a color, for help to visualize them.
-* TerrainViewer: Used to debug terrain/biomes in real time, when you modify a data of the NoiseManager get update in the terrain.
+* TerrainViewer: Used to debug terrain/biomes in real time, when you modify a data of the NoiseManager get update in the terrain. Controls: AWSD, mause and + - keys.
 
 ## Configuration <a name="configuration"></a>
 You can configure the project to adapt it to your necessities. You have two type configurations: constants or managers.

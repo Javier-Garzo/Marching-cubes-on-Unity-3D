@@ -45,8 +45,7 @@ public struct BuildChunkJob : IJob
     }
 
     /// <summary>
-    ///  Calculate the vertices of the vo
-    ///  xels, get the vertices of the triangulation table and his position in the world. Also check materials of that vertex (UV position).
+    ///  Calculate the vertices of the voxels, get the vertices of the triangulation table and his position in the world. Also check materials of that vertex (UV position).
     /// </summary>
     public void CalculateVertex(NativeArray<float4> cube, int colorVert)
     {

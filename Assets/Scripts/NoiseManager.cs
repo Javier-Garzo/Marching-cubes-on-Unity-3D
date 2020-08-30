@@ -261,10 +261,6 @@ public class NoiseManager : Singleton<NoiseManager>
 
 		System.Random random = new System.Random(NoiseManager.Instance.worldSeed);//Used System.random, because unity.Random is global, can cause problems if there is other random running in other script
 
-		float maxPossibleHeight = 0;
-		float amplitude = 1;
-		float frequency = 1;
-
 		float offsetX = random.Next(-100000, 100000) + offset.x * Constants.CHUNK_SIZE ;
 		float offsetY = random.Next(-100000, 100000) + offset.y * Constants.CHUNK_SIZE ;
 

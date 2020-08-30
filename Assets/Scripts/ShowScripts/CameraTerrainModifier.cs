@@ -1,10 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CameraTerrainModifier : MonoBehaviour
 {
-
+    public Text textSize;
+    public Text textMaterial;
     [Tooltip("Range where the player can interact with the terrain")]
     public float rangeHit = 100;
     [Tooltip("Force of modifications applied to the terrain")]
@@ -20,7 +22,7 @@ public class CameraTerrainModifier : MonoBehaviour
     void Awake()
     {
         chunkManager = ChunkManager.Instance;
-        
+        UpdateUI();
     }
 
     // Update is called once per frame
@@ -35,6 +37,35 @@ public class CameraTerrainModifier : MonoBehaviour
                 chunkManager.ModifyChunkData(hit.point, sizeHit, modification, buildingMaterial);
             }
         }
+
+        //Inputs
+        if (Input.GetAxis("Mouse ScrollWheel") > 0 && buildingMaterial != Constants.NUMBER_MATERIALS - 1)
+        {
+            buildingMaterial++;
+            UpdateUI();
+        }
+        else if (Input.GetAxis("Mouse ScrollWheel") < 0 && buildingMaterial != 0)
+        {
+            buildingMaterial--;
+            UpdateUI();
+        }
         
+        if(Input.GetKeyDown(KeyCode.Plus) || Input.GetKeyDown(KeyCode.KeypadPlus))
+        {
+            sizeHit++;
+            UpdateUI();
+        }
+        else if((Input.GetKeyDown(KeyCode.Minus) || Input.GetKeyDown(KeyCode.KeypadMinus)) && sizeHit > 1)
+        {
+            sizeHit--;
+            UpdateUI();
+        }
+
+    }
+
+    public void UpdateUI()
+    {
+        textSize.text = "(+ -) Brust size: " + sizeHit;
+        textMaterial.text = "(Mouse wheel) Actual material: " + buildingMaterial;
     }
 }

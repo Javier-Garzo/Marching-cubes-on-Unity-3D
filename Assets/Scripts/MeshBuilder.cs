@@ -71,7 +71,7 @@ public class MeshBuilder : Singleton<MeshBuilder>
         return meshGenerated;
     }
 
-    //This code is only used in the 15 cube confiurations and cube reductions example, it's deprecated and will be removed in the future
+    //This code is only used in the 15 cube configurations and cube reductions example, it's deprecated and will be removed in the future
     #region Original code (Deprecated)
 
     /// <summary>
