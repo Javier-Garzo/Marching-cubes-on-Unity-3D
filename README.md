@@ -13,6 +13,8 @@ Terrain voxel engine with the use of Marching Cubes implemented in Unity 2019.4.
 4. [Biome system](#biomeSystem)
     1. [Edit biomes](#subparagraph4-1)
     2. [Create new biomes](#subparagraph4-1)
+5. [Future work](#futureWork)
+6. [References](#references)
 
 ## Introduction <a name="introduction"></a>
 The unity project is a implementation of the algorithm [Marching Cubes](http://paulbourke.net/geometry/polygonise/) for the generation of a voxel engine for generate a random and infinite terrain. The idea is try to offer a flexible solution for developers that want integrate a free Voxel engine in his game or give a base for develop your own Marching Cube engine. Some of the actual properties of the engine:
@@ -28,10 +30,8 @@ The unity project is a implementation of the algorithm [Marching Cubes](http://p
 </br>
 
 ## Unity scenes <a name="unityScenes"></a>
-The unity project have a total of 5 different scenes:
-* 15Configuration: Show the 15 possible voxel configurations (use gizmos for visualize the cube area of each voxel). 
-* 256 cases to 15 reduction: A example of how different type of vertex states (vertex of the voxel is inside or outside the figure) generate the same mesh (use gizmos for visualize the cube area of each voxel). Controls: AWSD, mause and + - keys.
-* FirstPersonLevel: An example of a first person level and the recommended level for test the project. Load/generate a terrain where you can add voxels with the left click and remove voxels the right click. Controls: AWSD, mause and + - keys.
+The unity project have a total of 3 different scenes:
+* FirstPersonLevel: An example of a first person level and the recommended test level for check the project. Load/generate a terrain where you can add voxels with the left click and remove voxels the right click. Controls: AWSD, mause and + - keys.
 * ChunkVisualization: Similar to FirstPersonLevel but the generated terrain use a material that give each chunk a color, for help to visualize them.
 * TerrainViewer: Used to debug terrain/biomes in real time, when you modify a data of the NoiseManager get update in the terrain. Controls: AWSD, mause and + - keys.
 
@@ -89,14 +89,14 @@ Ice biome and plains biome:
 </br>
 
 ### Edit biomes<a name="subparagraph4-1"></a>
-For edit a biome you can use the TerrainViewer scene. You only need to remove all the biomes classes from the "NoiseManager" except the one which you want edit. 
+For edit a biome you can use the TerrainViewer scene. You only need to remove all the biomes classes from the "NoiseManager" except the one which you want edit and then modify the values of the inspector.
 
 You can use the "NoiseTerrainViewer" for use a bigger or smaller test area or apply offset to the terrain. All the changes applied in this scene update the test terrain, so you need start the scene, apply the changes to the biome, copy the component, stop the scene and paste the component values to the biome.
 
 Example of edition of the "B_Mountains" biome:
-![B_Mountains edition](https://user-images.githubusercontent.com/58559223/91642289-6909d700-ea2a-11ea-9610-be924a1e920c.png)
+![B_Mountains edition](https://user-images.githubusercontent.com/58559223/94999078-200fea00-05b7-11eb-8a27-ed4f774b4980.gif)
 
-### Create biomes<a name="subparagraph4-1"></a>
+### Create custom biomes<a name="subparagraph4-1"></a>
 For create the a biome you need create a class that heir from the class "Biome" and that must have the function "public override byte[] GenerateChunkData(Vector2Int vecPos, float[] biomeMerge)" used for generate the biome texturization. For this process you can copy a paste the code of some actual biome and apply the necessary changes to the code for get your custom biome. 
 
 When you have the new biome class create, use the [edit biome section](#subparagraph4-1) for edit the parameters in a real time test terrain.
@@ -104,7 +104,36 @@ When you have the new biome class create, use the [edit biome section](#subparag
 For apply this to other levels just add this new custom biome to the NoiseManager in the other scenes. Like in the image we add the new biome "B_NewBIome" to the NoiseManager:
 
 <img width="40%" src="https://user-images.githubusercontent.com/58559223/91642253-2811c280-ea2a-11ea-8977-2c799d6e01c9.PNG">
+<br><br>
+
+## Future work <a name="futureWork"></a>
+The priority of next update will be:
+* Fix the texturization system: The texturizations is not correct and can be visible in geometrical textures (ex: brick textures).
+* Support of multiple worlds in the ChunkSystem/file system (Actual only one word is used by all levels).
+* Different types of terrain modifications.
+
+Others futures updates:
+* Upgrade the biome system for support 2D noise biome creator (Actual the biome is created using 1D noise from 0-1).
+* Add a vegetation system to the biome system.
+* Cave system suApport for NoiseManager/Biome system.
+* Extend the Job System and Burst to the NoiseManager (efficiency improvements).
+* Add support to filesystem to save entities (animals, monsters ...)
+* Add a LOD system for the far chunks of the player.
 
 
 
+## References <a name="references"></a>
+The Marching Cube algorithm:
+* Polygonising a scalar field (Paul Bourke): http://paulbourke.net/geometry/polygonise/
+* Coding Adventure: Marching Cubes (Sebastian Lague): https://www.youtube.com/watch?v=M3iI2l0ltbE / https://github.com/SebLague/Marching-Cubes
 
+
+Noise system:
+* Procedural Landmass Generation (Sebastian Lague): https://www.youtube.com/watch?v=WP-Bm65Q-1Y&list=PLFt_AvWsXl0eBW2EiBtl_sxmDtSgZBxB3&index=2
+
+* Making maps with noise functions (Red Blob Games): https://www.redblobgames.com/maps/terrain-from-noise/
+
+Others:
+* Region file system (Seed Of Andromeda): https://www.seedofandromeda.com/blogs/1-creating-a-region-file-system-for-a-voxel-game
+
+* Textures used in the terrain (Hannes Delbeke): https://hannesdelbeke.blogspot.com/2012/10/handpainted-textures.html

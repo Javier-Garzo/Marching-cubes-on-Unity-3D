@@ -29,18 +29,6 @@ public class MeshBuilder : Singleton<MeshBuilder>
             uv = new NativeList<float2>(100, Allocator.TempJob),
         };
         JobHandle jobHandle = buildChunkJob.Schedule();
-
-        //Multi-thread job using IJobFor, not in use because the NativeList used in the job can cause problems with the multi-thread
-        /*BuildChunkJobFor buildChunkJob = new BuildChunkJobFor {
-            chunkData = new NativeArray<byte>(b, Allocator.TempJob),
-            isoLevel = this.isoLevel,
-            interpolate = this.interpolate,
-            vertex = new NativeList<float3>(500, Allocator.TempJob),
-            uv = new NativeList<float2>(100, Allocator.TempJob),
-        };
-        JobHandle sheduleJobDependency = new JobHandle();
-        JobHandle jobHandle = buildChunkJob.ScheduleParallel(Constants.MAX_HEIGHT, 15, sheduleJobDependency);*/
-
         jobHandle.Complete();
 
         //Get all the data from the jobs and use to generate a Mesh
@@ -71,8 +59,39 @@ public class MeshBuilder : Singleton<MeshBuilder>
         return meshGenerated;
     }
 
-    //This code is only used in the 15 cube configurations and cube reductions example, it's deprecated and will be removed in the future
+    //This old code was adapted in the "BuildChunkJob" script and don't used anymore. (Stay if someone want to use the ) 
     #region Original code (Deprecated)
+
+    /// <summary>
+    /// Method that calculate cubes, vertex and mesh in that order of a chunk.
+    /// </summary>
+    /// <param name="b"> data of the chunk</param>
+    public Mesh BuildChunkDeprecated(byte[] b)
+    {
+        List<Vector3> vertexArray = new List<Vector3>();
+        List<Vector2> matVert = new List<Vector2>();
+        for (int y = 0; y < Constants.MAX_HEIGHT; y++)//height
+        {
+            for (int z = 1; z < Constants.CHUNK_SIZE + 1; z++)//column, start at 1, because Z axis is inverted and need -1 as offset
+            {
+                for (int x = 0; x < Constants.CHUNK_SIZE; x++)//line 
+                {
+                    Vector4[] cube = new Vector4[8];
+                    int mat = Constants.NUMBER_MATERIALS;
+                    cube[0] = CalculateVertexChunk(x, y, z, b, ref mat);
+                    cube[1] = CalculateVertexChunk(x + 1, y, z, b, ref mat);
+                    cube[2] = CalculateVertexChunk(x + 1, y, z - 1, b, ref mat);
+                    cube[3] = CalculateVertexChunk(x, y, z - 1, b, ref mat);
+                    cube[4] = CalculateVertexChunk(x, y + 1, z, b, ref mat);
+                    cube[5] = CalculateVertexChunk(x + 1, y + 1, z, b, ref mat);
+                    cube[6] = CalculateVertexChunk(x + 1, y + 1, z - 1, b, ref mat);
+                    cube[7] = CalculateVertexChunk(x, y + 1, z - 1, b, ref mat);
+                    vertexArray.AddRange(CalculateVertex(cube, mat, ref matVert));
+                }
+            }
+        }
+        return buildMesh(vertexArray, matVert);
+    }
 
     /// <summary>
     /// It generate a mesh from a group of vertex. Flat shading type.(Deprecated)
