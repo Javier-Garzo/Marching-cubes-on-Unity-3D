@@ -4,5 +4,8 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Marching Cubes/DemoScenes/FirstPersonLevel.unity
+    guid: 44f1b522d161c5443a54ade00dee9724
   m_configObjects: {}

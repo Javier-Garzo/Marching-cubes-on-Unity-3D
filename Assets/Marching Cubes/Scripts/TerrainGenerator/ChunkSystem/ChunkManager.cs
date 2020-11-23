@@ -26,16 +26,13 @@ public class ChunkManager : Singleton<ChunkManager>
 
 
     //Load on initialize the game
-    private void Awake()
+    private void Start()
     {
         noiseManager = NoiseManager.Instance;
         player = GameObject.FindGameObjectWithTag("Player").transform;
         loadRegionDistance = Constants.CHUNK_SIDE * Constants.REGION_SIZE * Constants.VOXEL_SIDE * 0.9f;
         lastPlayerPos.x = Mathf.FloorToInt(player.position.x / loadRegionDistance) * loadRegionDistance + loadRegionDistance / 2;
         lastPlayerPos.z = Mathf.FloorToInt(player.position.z / loadRegionDistance) * loadRegionDistance + loadRegionDistance / 2;
-        CalculateDistances();
-        if (!Directory.Exists(Application.persistentDataPath + Region.REGION_DIRECTORY))//Check folder /chunks exists, if not create it
-            Directory.CreateDirectory(Application.persistentDataPath + Region.REGION_DIRECTORY);
         initRegion(Mathf.FloorToInt(player.position.x / loadRegionDistance), Mathf.FloorToInt(player.position.z/ loadRegionDistance));
     }
 

@@ -5,7 +5,7 @@ using System.IO;
 
 public class Region
 {
-    public const string REGION_DIRECTORY = "/chunks";
+    private  readonly string worldpath;
     /*REGIONS DATA = lookTable (REGION_LOOKTABLE_POS_BYTE * number of chunks in a region) + chunks data (2 byte per vertex in each chunk)
     lookTable: Indicate the start position of the chunk data in the region Data byte list +REGION_LOOKTABLE_POS_BYTE. Because the 0 it's reserved for indicate empty chunk.
     chunks data: Contains the data of all chunks saved in the region*/
@@ -14,14 +14,12 @@ public class Region
     private int regionZ;
     private bool modified = false;
 
-
-
-
     /// <summary>
     /// Load the data of a region from a file.
     /// </summary>
     public Region(int x, int z)
     {
+        worldpath = WorldManager.GetSelectedWorldDir();
         regionX = x;
         regionZ = z;
         if (File.Exists(DirectionChunkFile()))
@@ -138,7 +136,7 @@ public class Region
     //Help function, get chunk file direction.
     private string DirectionChunkFile()
     {
-        return Application.persistentDataPath + REGION_DIRECTORY + "/"+ regionX + "."+ regionZ + ".reg";
+        return worldpath + "/"+ regionX + "."+ regionZ + ".reg";
     }
 
 

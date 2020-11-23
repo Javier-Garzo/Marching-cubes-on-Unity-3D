@@ -65,7 +65,7 @@ public class CameraTerrainModifier : MonoBehaviour
 
     public void UpdateUI()
     {
-        textSize.text = "(+ -) Brust size: " + sizeHit;
+        textSize.text = "(+ -) Brush size: " + sizeHit;
         textMaterial.text = "(Mouse wheel) Actual material: " + buildingMaterial;
     }
 }

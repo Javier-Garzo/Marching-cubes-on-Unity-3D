@@ -10,7 +10,6 @@ public abstract class Singleton<T> : MonoBehaviour where T : Component
     /// The instance.
     /// </summary>
     private static T instance;
-    private static bool applicationIsQuitting = false;
 
     #endregion
 
@@ -23,11 +22,6 @@ public abstract class Singleton<T> : MonoBehaviour where T : Component
     {
         get
         {
-            if (applicationIsQuitting)
-            {
-                return null;
-            }
-
             if (instance == null)
             {
                 instance = FindObjectOfType<T>();
@@ -63,7 +57,8 @@ public abstract class Singleton<T> : MonoBehaviour where T : Component
 
     public void OnDestroy()
     {
-        applicationIsQuitting = true;
+        if (instance == this)
+            instance = null;
     }
 
     #endregion

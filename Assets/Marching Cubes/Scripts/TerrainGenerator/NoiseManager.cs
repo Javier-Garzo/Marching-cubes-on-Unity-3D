@@ -35,7 +35,7 @@ public class NoiseManager : Singleton<NoiseManager>
 		public float appearValue;//1 to 0 value when the biome appears. Next biomePropertie.appear value is where this biome end
 	}
 
-	public void Awake()
+	public void Start()
 	{
 		if (worldSeed == 0)//Generate random seed when use 0
 			worldSeed = Random.Range(int.MinValue, int.MaxValue);
@@ -59,15 +59,6 @@ public class NoiseManager : Singleton<NoiseManager>
 		float[] biomeNoise = GenerateNoiseMap(biomeScale * biomes.Length,octaves,persistance,lacunarity, vecPos);//Biomes noise (0-1) of each (x,z) position
 		float[] mergeBiomeTable;//Value(0-1) of merged with other biomes in a (x,z) position
 		int[] biomeTable = GetChunkBiomes(biomeNoise, out mergeBiomeTable);//biomes index in the array of BiomeProperties
-
-		/*for(int i= 0; i< mergeBiomeTable.Length;i++)
-		{
-			if(mergeBiomeTable[i] != 1)
-			{
-				Debug.Log(mergeBiomeTable[i]);
-			}
-		}*/
-
 
 		byte[][] biomesData = new byte[biomes.Length][];//Data generate from biomes.biome.GenerateChunkData()
 
@@ -151,7 +142,7 @@ public class NoiseManager : Singleton<NoiseManager>
 	{
 		float[] noiseMap = new float[Constants.CHUNK_VERTEX_AREA];//Size of vertex + all next borders (For the slope calculation)
 
-		System.Random random = new System.Random(NoiseManager.Instance.worldSeed);//Used System.random, because unity.Random is global, can cause problems if there is other random running in other script
+		System.Random random = new System.Random(Instance.worldSeed);//Used System.random, because unity.Random is global, can cause problems if there is other random running in other script
 		Vector2[] octaveOffsets = new Vector2[octaves];
 
 		float maxPossibleHeight = 0;
