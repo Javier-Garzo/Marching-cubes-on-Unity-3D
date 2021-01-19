@@ -315,7 +315,39 @@ public class ChunkManager : Singleton<ChunkManager>
             (int)(vertexOrigin.y + Constants.CHUNK_VERTEX_HEIGHT / 2),
             (int)(vertexOrigin.z - hitChunk.y * Constants.CHUNK_SIZE + Constants.CHUNK_VERTEX_SIZE / 2));
 
-        return chunkDict[hitChunk].GetMaterial(vertexChunk);
+        if (chunkDict[hitChunk].GetMaterial(vertexChunk) != Constants.NUMBER_MATERIALS)//not air material, we return it
+        {
+            return chunkDict[hitChunk].GetMaterial(vertexChunk);
+        }
+        else//Loop next vertex for get a other material different to air
+        {
+            //we check six next vertex 
+            Vector3[] nextVertexPoints = new Vector3[6];
+            nextVertexPoints[0] = new Vector3(vertexOrigin.x + 0, vertexOrigin.y - 1, vertexOrigin.z + 0);
+            nextVertexPoints[1] = new Vector3(vertexOrigin.x + 1, vertexOrigin.y + 0, vertexOrigin.z + 0);
+            nextVertexPoints[2] = new Vector3(vertexOrigin.x - 1, vertexOrigin.y + 0, vertexOrigin.z + 0);
+            nextVertexPoints[3] = new Vector3(vertexOrigin.x + 0, vertexOrigin.y + 0, vertexOrigin.z + 1);
+            nextVertexPoints[4] = new Vector3(vertexOrigin.x + 0, vertexOrigin.y + 0, vertexOrigin.z + 1);
+            nextVertexPoints[5] = new Vector3(vertexOrigin.x + 0, vertexOrigin.y + 1, vertexOrigin.z + 0);
+            List<byte> mats = new List<byte>();
+            for (int i = 0; i < nextVertexPoints.Length; i++)
+            {
+                //Chunk of the vertexPoint
+                hitChunk = new Vector2Int(Mathf.CeilToInt((nextVertexPoints[i].x + 1 - Constants.CHUNK_SIDE / 2) / Constants.CHUNK_SIDE),
+                                                Mathf.CeilToInt((nextVertexPoints[i].z + 1 - Constants.CHUNK_SIDE / 2) / Constants.CHUNK_SIDE));
+                //Position of the vertexPoint in the chunk (x,y,z)
+                vertexChunk = new Vector3Int((int)(nextVertexPoints[i].x - hitChunk.x * Constants.CHUNK_SIZE + Constants.CHUNK_VERTEX_SIZE / 2),
+                    (int)(nextVertexPoints[i].y + Constants.CHUNK_VERTEX_HEIGHT / 2),
+                    (int)(nextVertexPoints[i].z - hitChunk.y * Constants.CHUNK_SIZE + Constants.CHUNK_VERTEX_SIZE / 2));
+
+                if (chunkDict[hitChunk].GetMaterial(vertexChunk) != Constants.NUMBER_MATERIALS)//not air material, we return it
+                {
+                    return chunkDict[hitChunk].GetMaterial(vertexChunk);
+                }
+            }
+        }
+
+        return Constants.NUMBER_MATERIALS;//only air material in that point.
     }
 
 
