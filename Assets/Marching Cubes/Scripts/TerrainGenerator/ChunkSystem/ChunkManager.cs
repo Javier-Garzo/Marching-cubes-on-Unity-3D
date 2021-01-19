@@ -120,7 +120,6 @@ public class ChunkManager : Singleton<ChunkManager>
                 chunkDict.Remove(key);
             }
         }
-
     }
 
     /// <summary>
@@ -296,6 +295,27 @@ public class ChunkManager : Singleton<ChunkManager>
                 }
             }
         }
+    }
+
+
+    /// <summary>
+    /// Get the material(byte) from a specific point in the world
+    /// </summary>
+    public byte GetMaterialFromPoint(Vector3 point)
+    {
+        point = new Vector3(point.x / Constants.VOXEL_SIDE, point.y / Constants.VOXEL_SIDE, point.z / Constants.VOXEL_SIDE);
+
+        Vector3 vertexOrigin = new Vector3((int)point.x, (int)point.y, (int)point.z);
+
+        //Chunk containing the point
+        Vector2Int hitChunk = new Vector2Int(Mathf.CeilToInt((vertexOrigin.x + 1 - Constants.CHUNK_SIDE / 2) / Constants.CHUNK_SIDE),
+                                        Mathf.CeilToInt((vertexOrigin.z + 1 - Constants.CHUNK_SIDE / 2) / Constants.CHUNK_SIDE));
+        //VertexPoint of the point in the chunk (x,y,z)
+        Vector3Int vertexChunk = new Vector3Int((int)(vertexOrigin.x - hitChunk.x * Constants.CHUNK_SIZE + Constants.CHUNK_VERTEX_SIZE / 2),
+            (int)(vertexOrigin.y + Constants.CHUNK_VERTEX_HEIGHT / 2),
+            (int)(vertexOrigin.z - hitChunk.y * Constants.CHUNK_SIZE + Constants.CHUNK_VERTEX_SIZE / 2));
+
+        return chunkDict[hitChunk].GetMaterial(vertexChunk);
     }
 
 

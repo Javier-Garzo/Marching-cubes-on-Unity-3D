@@ -103,8 +103,15 @@ public class Chunk : MonoBehaviour
 
         data[byteIndex] = (byte)newValue;
         modified = true; //Don't direct change because some vertex are modifier in the same editions, wait to next frame
+    }
 
-
+    /// <summary>
+    /// Get the material(byte) from a specific point in the chunk
+    /// </summary>
+    public byte GetMaterial(Vector3 vertexPoint)
+    {
+        int byteIndex = ((int)vertexPoint.x + (int)vertexPoint.z * Constants.CHUNK_VERTEX_SIZE + (int)vertexPoint.y * Constants.CHUNK_VERTEX_AREA) * Constants.CHUNK_POINT_BYTE;
+        return data[byteIndex + 1];
     }
 
     /// <summary>
