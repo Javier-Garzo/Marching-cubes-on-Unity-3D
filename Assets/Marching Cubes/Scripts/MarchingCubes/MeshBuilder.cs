@@ -50,6 +50,8 @@ public class MeshBuilder : Singleton<MeshBuilder>
         }
         meshGenerated.uv = meshUV;
         meshGenerated.triangles = meshTriangles;
+        meshGenerated.RecalculateNormals();
+        meshGenerated.RecalculateTangents();
 
         //Dispose (Clear the jobs NativeLists)
         buildChunkJob.vertex.Dispose();
