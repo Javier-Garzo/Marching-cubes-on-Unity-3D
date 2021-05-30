@@ -9,7 +9,7 @@ public static class Constants
     #region configurable variables
     public const int CHUNK_SIZE = 16; //Number voxel per side
     public const int MAX_HEIGHT = 80; //Number of voxel of height in a chunk, pair number recommended
-    public const float VOXEL_SIDE = 1; //Size of a side of a voxel
+    public const float VOXEL_SIDE = 1f; //Size of a side of a voxel
 
     public const int REGION_SIZE = 32; //Number chunk per side. If change REGION_SIZE maybe you need change REGION_LOOKTABLE_POS_BYTE.
     public const int REGION_LOOKTABLE_POS_BYTE = 2; //Number of byte needed for represent (REGION_SIZE * REGION_SIZE) +1. Example: (32 x 32) +1= 1025 = 2 bytes needed.  MAX = 4.

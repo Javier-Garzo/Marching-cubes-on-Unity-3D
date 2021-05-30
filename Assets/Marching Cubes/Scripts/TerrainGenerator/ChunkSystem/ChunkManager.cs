@@ -219,15 +219,14 @@ public class ChunkManager : Singleton<ChunkManager>
     /// </summary>
     public void ModifyChunkData(Vector3 modificationPoint, float range, float modification, int mat = -1)
     {
+        Vector3 originalPint = modificationPoint;
         modificationPoint = new Vector3(modificationPoint.x / Constants.VOXEL_SIDE, modificationPoint.y / Constants.VOXEL_SIDE, modificationPoint.z / Constants.VOXEL_SIDE);
 
+        //Chunk voxel position (based on the chunk system)
         Vector3 vertexOrigin = new Vector3((int)modificationPoint.x, (int)modificationPoint.y, (int)modificationPoint.z);
 
-
-        //Debug.Log(vertexOrigin);
-        range /= Constants.VOXEL_SIDE;
-        int intRange = (int)(range / 2);//Side /2 because the for is from -intRange to +intRange
-        //Debug.Log("Range: " + range + " | " + range/2/ Constants.VOXEL_SIDE);
+        //intRange (convert Vector3 real world range to the voxel size range)
+        int intRange = (int)(range / 2 * Constants.VOXEL_SIDE);//range /2 because the for is from -intRange to +intRange
 
         for (int y = -intRange; y <= intRange; y++)
         {
@@ -239,28 +238,29 @@ public class ChunkManager : Singleton<ChunkManager>
                     if (vertexOrigin.y + y >= Constants.MAX_HEIGHT / 2 || vertexOrigin.y + y <= -Constants.MAX_HEIGHT / 2)
                         continue;
 
-                    //Real position of vertex in world
+                    //Edit vertex of the chunk
                     Vector3 vertexPoint = new Vector3(vertexOrigin.x + x, vertexOrigin.y + y, vertexOrigin.z + z);
 
                     float distance = Vector3.Distance(vertexPoint, modificationPoint);
-                    if (distance > range)//Not in range of modification
+                    if (distance > range)//Not in range of modification, we check other vertexs
                     {
                         //Debug.Log("no Rango: "+ distance + " > " + range+ " |  "+ vertexPoint +" / " + modificationPoint);
                         continue;
                     }
 
                     //Chunk of the vertexPoint
-                    Vector2Int hitChunk = new Vector2Int(Mathf.CeilToInt((vertexPoint.x + 1 - Constants.CHUNK_SIDE / 2) / Constants.CHUNK_SIDE),
-                                                    Mathf.CeilToInt((vertexPoint.z + 1 - Constants.CHUNK_SIDE / 2) / Constants.CHUNK_SIDE));
+                    Vector2Int hitChunk = new Vector2Int(Mathf.CeilToInt((vertexPoint.x + 1 - Constants.CHUNK_SIZE / 2) / Constants.CHUNK_SIZE),
+                                                    Mathf.CeilToInt((vertexPoint.z + 1 - Constants.CHUNK_SIZE / 2) / Constants.CHUNK_SIZE));
                     //Position of the vertexPoint in the chunk (x,y,z)
                     Vector3Int vertexChunk = new Vector3Int((int)(vertexPoint.x - hitChunk.x * Constants.CHUNK_SIZE + Constants.CHUNK_VERTEX_SIZE / 2),
                         (int)(vertexPoint.y + Constants.CHUNK_VERTEX_HEIGHT / 2),
                         (int)(vertexPoint.z - hitChunk.y * Constants.CHUNK_SIZE + Constants.CHUNK_VERTEX_SIZE / 2));
 
                     int chunkModification = (int)(modification * (1 - distance / range));
+                    //Debug.Log( vertexPoint + " | chunk: "+ hitChunk+ " / " + vertexChunk);//Debug Vertex point to chunk and vertexChunk
                     chunkDict[hitChunk].modifyTerrain(vertexChunk, chunkModification, mat);
 
-                    //Functions for change last vertex of chunk, vertex that touch other chunk
+                    //Functions for change last vertex of chunk (vertex that touch others chunk)
                     if (vertexChunk.x == 0 && vertexChunk.z == 0)//Interact with chunk(-1,-1), chunk(-1,0) and chunk(0,-1)
                     {
                         //Vertex of chunk (-1,0)
