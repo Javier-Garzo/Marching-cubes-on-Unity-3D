@@ -13,8 +13,9 @@ Terrain voxel engine with the use of Marching Cubes implemented in Unity 2019.4.
 4. [Biome system](#biomeSystem)
     1. [Edit biomes](#subparagraph4-1)
     2. [Create new biomes](#subparagraph4-1)
-5. [Future work](#futureWork)
-6. [References](#references)
+5. [World manager](#worldmanager)
+6. [Future work](#futureWork)
+7. [References](#references)
 
 ## Introduction <a name="introduction"></a>
 The unity project is a implementation of the algorithm [Marching Cubes](http://paulbourke.net/geometry/polygonise/) for the generation of a voxel engine for generate a random and infinite terrain. The idea is try to offer a flexible solution for developers that want integrate a free Voxel engine in his game or give a base for develop your own Marching Cube engine. Some of the actual properties of the engine:
@@ -106,10 +107,18 @@ For apply this to other levels just add this new custom biome to the NoiseManage
 <img width="40%" src="https://user-images.githubusercontent.com/58559223/91642253-2811c280-ea2a-11ea-8977-2c799d6e01c9.PNG">
 <br><br>
 
+## World Manager<a name="worldmanager"></a>
+The world manager is a **optional** manager to support multiple worlds data directions, just to allow multiple games in different worlds. You can found the prefab in "Assets > Marching Cubes > WorldManager", this prefab contain a gameobject with the manager script.
+This manager supports:
+* Change default world when manager is instanced: You can change the public variable "World" on inspector for select the loaded world. The default name if not change the variable or the manager is not instanced is "default".
+* Fast access button to worlds data folder on script: Exists a button on the inspector at the end of the script, that allow you to open the computer folder where all data/worlds are stored.
+* Functions for menu: If you open the script you can see the multiple function that the manager support, get all the worlds created, get the current selected world, select/create a new world o see the data size of world. The idea is that you have all this functions for create a world menu or similar.
+
+
 ## Future work <a name="futureWork"></a>
 The priority of next update will be:
-* Fix the texturization system: The texturizations is not correct and can be visible in geometrical textures (ex: brick textures).
-* Support of multiple worlds in the ChunkSystem/file system (Actual only one word is used by all levels).
+* Fix the texturization system: The texturizations is not correct and can be visible in geometrical textures (ex: brick textures). Update: Some improvements but need some fixes.
+* ~~Support of multiple worlds in the ChunkSystem/file system (Actual only one word is used by all levels)~~ (WorldManager added).
 * Different types of terrain modifications.
 
 Others futures updates:

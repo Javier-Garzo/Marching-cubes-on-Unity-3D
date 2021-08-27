@@ -13,8 +13,6 @@ public class WorldManager : Singleton<WorldManager>
     private void Awake()
     {
         base.Awake();
-
-        GetSelectedWorldDir();
         if (Instance == this)
         {
             DontDestroyOnLoad(gameObject);
