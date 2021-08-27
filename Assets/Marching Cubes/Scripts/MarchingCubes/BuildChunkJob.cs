@@ -65,8 +65,9 @@ public struct BuildChunkJob : IJob
             int v1 = jobCornerIndexAFromEdge[jobTriTable[i]];
             int v2 = jobCornerIndexBFromEdge[jobTriTable[i]];
 
+            float weight = 1;//Unused variable, must be used for interpolation terrain
             if (interpolate)
-                vertex.Add(interporlateVertex(cube[v1], cube[v2]));
+                vertex.Add(interporlateVertex(cube[v1], cube[v2], out weight));
             else
                 vertex.Add(midlePointVertex(cube[v1], cube[v2]));
 
@@ -83,13 +84,13 @@ public struct BuildChunkJob : IJob
                 uv.Add(new float2(Constants.MATERIAL_SIZE * (colorVert % Constants.MATERIAL_FOR_ROW) + uvOffset,
                                   1 - Constants.MATERIAL_SIZE * Mathf.Floor(colorVert / Constants.MATERIAL_FOR_ROW) - uvOffset));
             else if (i % 6 == 3)
-                uv.Add(new float2(Constants.MATERIAL_SIZE * (colorVert % Constants.MATERIAL_FOR_ROW) + Constants.MATERIAL_SIZE - uvOffset,
+                uv.Add(new float2(Constants.MATERIAL_SIZE * (colorVert % Constants.MATERIAL_FOR_ROW + uvOffset),
                                   1 - Constants.MATERIAL_SIZE * Mathf.Floor(colorVert / Constants.MATERIAL_FOR_ROW) - Constants.MATERIAL_SIZE + uvOffset));
             else if (i % 6 == 4)
-                uv.Add(new float2(Constants.MATERIAL_SIZE * (colorVert % Constants.MATERIAL_FOR_ROW) + uvOffset,
-                                   1 - Constants.MATERIAL_SIZE * Mathf.Floor(colorVert / Constants.MATERIAL_FOR_ROW) - Constants.MATERIAL_SIZE + uvOffset));
+                uv.Add(new float2(Constants.MATERIAL_SIZE * (colorVert % Constants.MATERIAL_FOR_ROW) + Constants.MATERIAL_SIZE - uvOffset,
+                                  1 - Constants.MATERIAL_SIZE * Mathf.Floor(colorVert / Constants.MATERIAL_FOR_ROW) - Constants.MATERIAL_SIZE + uvOffset));
             else if (i % 6 == 5)
-                uv.Add(new float2(Constants.MATERIAL_SIZE * (colorVert % Constants.MATERIAL_FOR_ROW + uvOffset),
+                uv.Add(new float2(Constants.MATERIAL_SIZE * (colorVert % Constants.MATERIAL_FOR_ROW) + uvOffset,
                                   1 - Constants.MATERIAL_SIZE * Mathf.Floor(colorVert / Constants.MATERIAL_FOR_ROW) - uvOffset));
 
 
@@ -116,9 +117,10 @@ public struct BuildChunkJob : IJob
     /// <summary>
     /// Calculate a point between two vertex using the weight of each vertex , used in interpolation voxel building.
     /// </summary>
-    public float3 interporlateVertex(float4 p1, float4 p2)
+    public float3 interporlateVertex(float4 p1, float4 p2, out float interpolation)
     {
-        return math.lerp(new float3(p1.x,p1.y,p1.z), new float3(p2.x,p2.y,p2.z), (isoLevel - p1.w) / (p2.w - p1.w));
+        interpolation = (isoLevel - p1.w) / (p2.w - p1.w);
+        return math.lerp(new float3(p1.x,p1.y,p1.z), new float3(p2.x,p2.y,p2.z), interpolation);
     }
     /// <summary>
     /// Calculate the middle point between two vertex, for no interpolation voxel building.

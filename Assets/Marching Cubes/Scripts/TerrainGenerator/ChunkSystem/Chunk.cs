@@ -6,8 +6,6 @@ public class Chunk : MonoBehaviour
 {
     [Tooltip("Active gizmos that represent the area of the chunk")]
     public bool debug = false;
-    [Tooltip("Active gizmos that represent all vertex of terrain, very expensive")]
-    public bool advancedDebug = false;
     private byte[] data;
     private int Xpos;
     private int Zpos;
@@ -123,8 +121,7 @@ public class Chunk : MonoBehaviour
             fatherRegion.saveChunkData(data, Xpos, Zpos);
     }
 
-
-
+#if UNITY_EDITOR
     //Used for visual debug
     void OnDrawGizmos()
     {
@@ -136,34 +133,8 @@ public class Chunk : MonoBehaviour
 
             Gizmos.DrawWireCube(transform.position,new Vector3(Constants.CHUNK_SIDE, Constants.MAX_HEIGHT * Constants.VOXEL_SIDE, Constants.CHUNK_SIDE));
         }
-        if (advancedDebug)
-        {
-
-            Gizmos.color = Color.Lerp(Color.red, Color.magenta, ((transform.position.x + transform.position.z) % 100) / 100);
-
-            Gizmos.matrix = transform.localToWorldMatrix;
-
-            float isoLevel = MeshBuilder.Instance.isoLevel;
-            for (int y = 0; y < Constants.CHUNK_VERTEX_HEIGHT; y++)//height
-            {
-                for (int z = 0; z < Constants.CHUNK_VERTEX_SIZE; z++)//column
-                {
-                    for (int x = 0; x < Constants.CHUNK_VERTEX_SIZE; x++)//line 
-                    {
-
-                        if (data[(x + z * Constants.CHUNK_VERTEX_SIZE + y * Constants.CHUNK_VERTEX_AREA) * Constants.CHUNK_POINT_BYTE] > isoLevel)
-                        {
-                            Gizmos.DrawSphere(new Vector3((x - Constants.CHUNK_SIZE / 2) * Constants.VOXEL_SIDE,
-                                (y - Constants.MAX_HEIGHT / 2) * Constants.VOXEL_SIDE,
-                                (z - Constants.CHUNK_SIZE / 2) * Constants.VOXEL_SIDE)
-                                , 0.2f);
-                        }
-                    }
-                }
-
-            }
-        }
     }
+#endif
 }
 
 

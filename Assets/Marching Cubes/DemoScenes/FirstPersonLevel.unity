@@ -278,6 +278,8 @@ MonoBehaviour:
   terrainMaterial: {fileID: 2100000, guid: e5e158f8f9cada14380f5755c6cef11c, type: 2}
   chunkViewDistance: 6
   chunkMantainDistance: 0.3
+  useCameraPosition: 1
+  debugMode: 0
 --- !u!4 &697465278
 Transform:
   m_ObjectHideFlags: 0
@@ -307,7 +309,7 @@ GameObject:
   - component: {fileID: 963194229}
   m_Layer: 0
   m_Name: Main Camera - Player
-  m_TagString: Player
+  m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -372,7 +374,7 @@ Transform:
   m_GameObject: {fileID: 963194225}
   m_LocalRotation: {x: 0.1625375, y: 0.6281522, z: -0.1363852, w: 0.74860233}
   m_LocalPosition: {x: 0, y: 40, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.99999994, y: 1, z: 0.99999994}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 3

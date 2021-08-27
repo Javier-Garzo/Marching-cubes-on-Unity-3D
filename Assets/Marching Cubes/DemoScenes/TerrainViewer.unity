@@ -167,6 +167,8 @@ MonoBehaviour:
   terrainMaterial: {fileID: 2100000, guid: e5e158f8f9cada14380f5755c6cef11c, type: 2}
   chunkViewDistance: 3
   chunkMantainDistance: 0.3
+  useCameraPosition: 1
+  debugMode: 0
 --- !u!1 &399327858
 GameObject:
   m_ObjectHideFlags: 0
@@ -244,7 +246,7 @@ GameObject:
   - component: {fileID: 963194230}
   m_Layer: 0
   m_Name: Main Camera - Player
-  m_TagString: Player
+  m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

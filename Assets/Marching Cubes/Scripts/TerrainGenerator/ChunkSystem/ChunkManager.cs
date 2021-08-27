@@ -11,6 +11,10 @@ public class ChunkManager : Singleton<ChunkManager>
     public int chunkViewDistance = 10;
     [Range(0.1f, 0.6f)][Tooltip("Distance extra for destroy inactive chunks, this chunks consume ram, but load faster.")]
     public float chunkMantainDistance = 0.3f;
+    [Tooltip("Use the camera position to calculate the player position. True-> use Camera.main tag / False-> use Player tag")]
+    public bool useCameraPosition = true;
+    [Tooltip("F4 to active. Show the current chunk and the data of the voxel you are looking. Important: You need activate gizmos in Game tab!!")]
+    public bool debugMode = false;
 
     private Dictionary<Vector2Int, Chunk> chunkDict = new Dictionary<Vector2Int, Chunk>();
     private Dictionary<Vector2Int, Region> regionDict = new Dictionary<Vector2Int, Region>();
@@ -29,7 +33,10 @@ public class ChunkManager : Singleton<ChunkManager>
     private void Start()
     {
         noiseManager = NoiseManager.Instance;
-        player = GameObject.FindGameObjectWithTag("Player").transform;
+        if (useCameraPosition)
+            player = Camera.main.transform;//Use the Camera.main as player pos
+        else
+            player = GameObject.FindGameObjectWithTag("Player").transform;//Search gameobject with tag Player
         loadRegionDistance = Constants.CHUNK_SIDE * Constants.REGION_SIZE * Constants.VOXEL_SIDE * 0.9f;
         lastPlayerPos.x = Mathf.FloorToInt(player.position.x / loadRegionDistance) * loadRegionDistance + loadRegionDistance / 2;
         lastPlayerPos.z = Mathf.FloorToInt(player.position.z / loadRegionDistance) * loadRegionDistance + loadRegionDistance / 2;
@@ -87,6 +94,10 @@ public class ChunkManager : Singleton<ChunkManager>
         CheckNewChunks();
         LoadChunkFromList();
         CheckRegion();
+        if (Input.GetKeyDown(KeyCode.F4))
+        {
+            debugMode = !debugMode;
+        }
         //Debug.Log("Regions: " + regionDict.Count + "   / Chunks: " + chunkDict.Count);
     }
 
@@ -364,6 +375,45 @@ public class ChunkManager : Singleton<ChunkManager>
         foreach (Region region in regionDict.Values)
             region.SaveRegionData();
     }
+
+
+
+    #region DebugMode
+    //The code of the region is used for the Debug system, allow you to check your current chunk and see data from the voxels.
+
+#if UNITY_EDITOR
+    private void OnDrawGizmos()
+    {
+        if (debugMode && Application.isPlaying)
+        {
+            //Show chunk
+            Vector2Int actualChunk = new Vector2Int(Mathf.CeilToInt((player.position.x - Constants.CHUNK_SIDE / 2) / Constants.CHUNK_SIDE),
+                                        Mathf.CeilToInt((player.position.z - Constants.CHUNK_SIDE / 2) / Constants.CHUNK_SIDE));
+            Vector3 chunkCenter = new Vector3(actualChunk.x * Constants.CHUNK_SIDE, 0, actualChunk.y * Constants.CHUNK_SIDE);
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireCube(chunkCenter, new Vector3(Constants.CHUNK_SIDE, Constants.MAX_HEIGHT * Constants.VOXEL_SIDE, Constants.CHUNK_SIDE));
+
+            //Show voxel
+            RaycastHit hitInfo;
+            if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hitInfo, 100.0f))
+            {
+                Vector2Int chunkHit = new Vector2Int(Mathf.CeilToInt((hitInfo.point.x - Constants.CHUNK_SIDE / 2) / Constants.CHUNK_SIDE),
+                            Mathf.CeilToInt((hitInfo.point.z - Constants.CHUNK_SIDE / 2) / Constants.CHUNK_SIDE));
+                Vector3Int vertexChunk = new Vector3Int((int)(hitInfo.point.x - chunkHit.x * Constants.CHUNK_SIZE + Constants.CHUNK_VERTEX_SIZE / 2),
+                            (int)(hitInfo.point.y + Constants.CHUNK_VERTEX_HEIGHT / 2),
+                            (int)(hitInfo.point.z - chunkHit.y * Constants.CHUNK_SIZE + Constants.CHUNK_VERTEX_SIZE / 2));
+                Vector3 voxelRealPosition = new Vector3((Mathf.FloorToInt(hitInfo.point.x / Constants.VOXEL_SIDE)) * Constants.VOXEL_SIDE + Constants.VOXEL_SIDE/2,
+                            (Mathf.FloorToInt(hitInfo.point.y / Constants.VOXEL_SIDE)) * Constants.VOXEL_SIDE + Constants.VOXEL_SIDE/2,
+                            (Mathf.FloorToInt(hitInfo.point.z / Constants.VOXEL_SIDE)) * Constants.VOXEL_SIDE + Constants.VOXEL_SIDE/2);
+
+                Gizmos.color = Color.red;
+                Gizmos.DrawWireCube(voxelRealPosition, Vector3.one * Constants.VOXEL_SIDE);
+            }
+        }
+    }
+
+#endif
+#endregion
 }
 
 
