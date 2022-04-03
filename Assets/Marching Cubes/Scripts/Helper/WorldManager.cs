@@ -7,7 +7,7 @@ using System.Linq;
 public class WorldManager : Singleton<WorldManager>
 {
     [SerializeField]private string world = "default"; //World selected by the manager
-    public const string WORLDS_DIRECTORY = "/worlds"; //Directory worlds (save folder)
+    public const string WORLDS_DIRECTORY = "/worlds"; //Directory worlds (save folder, that contains the worlds folders)
     
 
     private void Awake()
@@ -26,19 +26,31 @@ public class WorldManager : Singleton<WorldManager>
     }
 
     /// <summary>
-    /// Create and select a new world (save/load folder).
+    /// Create and select a new world (save/load folder), a worldConfig can be passed as second optional parameter for being used by the Noisemanager (or empty for default one).
     /// </summary>
-    public static bool CreateWorld(string worldName)
+    public static bool CreateWorld(string worldName, NoiseManager.WorldConfig newWorldConfig = null)
     {
         if (!Directory.Exists(Application.persistentDataPath + WORLDS_DIRECTORY + '/' + worldName))
         {
             Directory.CreateDirectory(Application.persistentDataPath + WORLDS_DIRECTORY + '/' + worldName);
             Instance.world = worldName;
+            if(newWorldConfig != null)//Use the WorldConfig passed as parameter
+            {
+                string worldConfig = JsonUtility.ToJson(newWorldConfig);
+                File.WriteAllText(Application.persistentDataPath + WORLDS_DIRECTORY + '/' + worldName+ "/worldConfig.json", worldConfig);
+            }
+            else//Use the default world config
+            {
+                newWorldConfig = new NoiseManager.WorldConfig();
+                newWorldConfig.worldSeed = Random.Range(int.MinValue, int.MaxValue);
+                string worldConfig = JsonUtility.ToJson(newWorldConfig);
+                File.WriteAllText(Application.persistentDataPath + WORLDS_DIRECTORY + '/' + worldName + "/worldConfig.json", worldConfig);
+            }
             return true;
         }
         else
         {
-            Debug.Log("folder already exists");
+            Debug.LogError("folder already exists");
             return false;
         }
     }
@@ -55,7 +67,7 @@ public class WorldManager : Singleton<WorldManager>
         }
         else
         {
-            Debug.Log("folder not exists");
+            Debug.LogError("folder not exists");
             return false;
         }
     }
@@ -72,7 +84,7 @@ public class WorldManager : Singleton<WorldManager>
         }
         else
         {
-            Debug.Log("world (folder) not exists");
+            Debug.LogError("world (folder) not exists");
             return false;
         }
     }
@@ -91,6 +103,16 @@ public class WorldManager : Singleton<WorldManager>
     public static string GetSelectedWorldDir()
     {
         return Application.persistentDataPath + WORLDS_DIRECTORY + "/" + Instance.world;
+    }
+
+    /// <summary>
+    /// Return WorldConfig of the selected world.
+    /// </summary>
+    public static NoiseManager.WorldConfig GetSelectedWorldConfig()
+    {
+        string selectedWorld = GetSelectedWorldName();
+        string json = File.ReadAllText(Application.persistentDataPath + WORLDS_DIRECTORY + '/' + selectedWorld + "/worldConfig.json");
+        return JsonUtility.FromJson<NoiseManager.WorldConfig>(json);
     }
 
     /// <summary>

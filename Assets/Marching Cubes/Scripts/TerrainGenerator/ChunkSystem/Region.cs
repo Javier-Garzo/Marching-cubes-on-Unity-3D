@@ -5,7 +5,7 @@ using System.IO;
 
 public class Region
 {
-    private  readonly string worldpath;
+    private readonly string worldpath;
     /*REGIONS DATA = lookTable (REGION_LOOKTABLE_POS_BYTE * number of chunks in a region) + chunks data (2 byte per vertex in each chunk)
     lookTable: Indicate the start position of the chunk data in the region Data byte list +REGION_LOOKTABLE_POS_BYTE. Because the 0 it's reserved for indicate empty chunk.
     chunks data: Contains the data of all chunks saved in the region*/

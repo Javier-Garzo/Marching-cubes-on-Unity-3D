@@ -29,8 +29,8 @@ public class ChunkManager : Singleton<ChunkManager>
     private float loadRegionDistance;
 
 
-    //Load on initialize the game
-    private void Start()
+    //Search the player start position and the start the chunk load (Called from NoiseManager start)
+    public void Initialize()
     {
         noiseManager = NoiseManager.Instance;
         if (useCameraPosition)

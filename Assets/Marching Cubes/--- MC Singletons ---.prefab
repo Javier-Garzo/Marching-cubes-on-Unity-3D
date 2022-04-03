@@ -80,13 +80,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cbad037a5d2c2bb49a28280c74dffa83, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  worldSeed: 49652736
-  biomeScale: 150
-  diffToMerge: 0.025
-  surfaceLevel: 38
-  octaves: 5
-  persistance: 0.1
-  lacunarity: 9
+  worldConfig:
+    worldSeed: 49652736
+    biomeScale: 150
+    diffToMerge: 0.025
+    surfaceLevel: 38
+    octaves: 5
+    persistance: 0.1
+    lacunarity: 9
   biomes:
   - biome: {fileID: 5255459944120257049}
     appearValue: 1
@@ -419,6 +420,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02dfafdeb5a90df46ab4078bb2288f7c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  terrainMaterial: {fileID: 2100000, guid: 24a7a5b422425e04893ed810ba6590e9, type: 2}
+  terrainMaterial: {fileID: 2100000, guid: e5e158f8f9cada14380f5755c6cef11c, type: 2}
   chunkViewDistance: 6
   chunkMantainDistance: 0.3
+  useCameraPosition: 1
+  debugMode: 0

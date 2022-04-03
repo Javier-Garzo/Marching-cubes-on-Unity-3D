@@ -19,6 +19,7 @@ public static class Constants
 
     public const bool SAVE_GENERATED_CHUNKS = false; //False, no save unmodified chunks, use seed to generate again the next time (-File size -save time +Generation cost). True, generated chunk are saved in the memory (+File size +save time -Generation cost ) 
     public const bool REGION_SAVE_COMPRESSED = true; //Compress the .reg files. -File size +CPU cost of save a file. RECOMMENDED: TRUE
+    public const bool AUTO_CLEAR_WHEN_NOISE_CHANGE = true; //If World Manager not exists in the scene and the current noise change, we clear the old world data.
 
     #endregion
 

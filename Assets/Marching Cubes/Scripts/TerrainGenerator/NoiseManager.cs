@@ -6,24 +6,34 @@ public class NoiseManager : Singleton<NoiseManager>
 {
 
 	[Header("World configuration")]
-	[Tooltip("Seed of the world")]
-	[Range(int.MinValue + 100, int.MaxValue - 100)]
-	public int worldSeed = 0;
-	[Tooltip("Biomes sizes")]
-	public float biomeScale;
+	public WorldConfig worldConfig;//Current world configuration of the noiseManager
+	[System.Serializable]
+	public class WorldConfig
+	{
+		[Tooltip("Seed of the world (0 seed generate randoms different worlds -testing-)")]
+		[Range(int.MinValue + 100, int.MaxValue - 100)]
+		public int worldSeed = 0;
+		[Tooltip("Biomes sizes")]
+		public float biomeScale = 150;
 
-	[Header("Biome merge configuration")]
-	[Tooltip("biomes.appearValue difference for merge")][Range(0.01f,0.5f)]
-	public float diffToMerge = 0.025f;
-	[Tooltip("Surface desired level, height where biomes merge")]
-	[Range(1, Constants.MAX_HEIGHT)]
-	public int surfaceLevel = Constants.MAX_HEIGHT /8;
-	[Tooltip("Octaves used in the biome noise")][Range(1, 5)]
-	public int octaves = 2;
-	[Tooltip("Amplitude decrease of biomes per octave,very low recommended")][Range(0.001f, 1f)]
-	public float persistance = 0.1f;
-	[Tooltip("Frequency increase of biomes per octave")][Range(1, 20)]
-	public float lacunarity = 9f;
+		[Header("Biome merge configuration")]
+		[Tooltip("biomes.appearValue difference for merge")]
+		[Range(0.01f, 0.5f)]
+		public float diffToMerge = 0.025f;
+		[Tooltip("Surface desired level, height where biomes merge")]
+		[Range(1, Constants.MAX_HEIGHT)]
+		public int surfaceLevel = Constants.MAX_HEIGHT / 8;
+		[Tooltip("Octaves used in the biome noise")]
+		[Range(1, 5)]
+		public int octaves = 5;
+		[Tooltip("Amplitude decrease of biomes per octave,very low recommended")]
+		[Range(0.001f, 1f)]
+		public float persistance = 0.1f;
+		[Tooltip("Frequency increase of biomes per octave")]
+		[Range(1, 20)]
+		public float lacunarity = 9f;
+	}
+
 
 	[Header("Biomes Array")]// Empty for get all Biomes of inside the GameObject
 	public BiomeProperties[] biomes;
@@ -37,8 +47,31 @@ public class NoiseManager : Singleton<NoiseManager>
 
 	public void Start()
 	{
-		if (worldSeed == 0)//Generate random seed when use 0
-			worldSeed = Random.Range(int.MinValue, int.MaxValue);
+		if (worldConfig.worldSeed == 0 && !WorldManager.IsCreated())//Generate random seed when use 0 and is scene testing (no WorldManager exists)
+		{
+			Debug.Log("worldSeed 0 detected, generating random seed world");
+			string selectedWorld = WorldManager.GetSelectedWorldName();
+			WorldManager.DeleteWorld(selectedWorld);//Remove previous data
+			WorldManager.CreateWorld(selectedWorld, worldConfig);//Create a new world folder for correct working
+			worldConfig.worldSeed = Random.Range(int.MinValue, int.MaxValue);
+		}
+		else if((Constants.AUTO_CLEAR_WHEN_NOISE_CHANGE) && !WorldManager.IsCreated())//If AUTO_CLEAR_WHEN_NOISE_CHANGE true and world manager not exist, we clear old world data (we assume we are using a debug scene)
+		{
+			string selectedWorld = WorldManager.GetSelectedWorldName();
+			WorldConfig loadedWorldConfig = WorldManager.GetSelectedWorldConfig();
+			//If worldConfig loaded is different to the current one, remove old data and save the new config
+			if(loadedWorldConfig.worldSeed != worldConfig.worldSeed || loadedWorldConfig.biomeScale != worldConfig.biomeScale || loadedWorldConfig.diffToMerge != worldConfig.diffToMerge || loadedWorldConfig.surfaceLevel != worldConfig.surfaceLevel ||
+				loadedWorldConfig.octaves != worldConfig.octaves || loadedWorldConfig.persistance != worldConfig.persistance || loadedWorldConfig.lacunarity != worldConfig.lacunarity)
+			{
+				WorldManager.DeleteWorld(selectedWorld);//Remove old world
+				WorldManager.CreateWorld(selectedWorld, worldConfig);//Create new world with the new worldConfig
+			}
+
+		}
+		else if(WorldManager.IsCreated())//Load config of the world
+		{
+			worldConfig = WorldManager.GetSelectedWorldConfig();
+		}
 		if(biomes.Length == 0)
 		{
 			Biome[] biomeArray = GetComponents<Biome>();
@@ -49,14 +82,14 @@ public class NoiseManager : Singleton<NoiseManager>
 				biomes[i].appearValue = (float)(biomeArray.Length-i) / biomeArray.Length;
 			}
 		}
-
+		ChunkManager.Instance.Initialize();
 	}
 
 	public byte[] GenerateChunkData(Vector2Int vecPos)
 	{
 		byte[] chunkData = new byte[Constants.CHUNK_BYTES];
 
-		float[] biomeNoise = GenerateNoiseMap(biomeScale * biomes.Length,octaves,persistance,lacunarity, vecPos);//Biomes noise (0-1) of each (x,z) position
+		float[] biomeNoise = GenerateNoiseMap(worldConfig.biomeScale * biomes.Length, worldConfig.octaves, worldConfig.persistance, worldConfig.lacunarity, vecPos);//Biomes noise (0-1) of each (x,z) position
 		float[] mergeBiomeTable;//Value(0-1) of merged with other biomes in a (x,z) position
 		int[] biomeTable = GetChunkBiomes(biomeNoise, out mergeBiomeTable);//biomes index in the array of BiomeProperties
 
@@ -101,15 +134,15 @@ public class NoiseManager : Singleton<NoiseManager>
 				{
 					if (noise[index] < biomes[i].appearValue)
 					{
-						if (i != 0 && diffToMerge + noise[index] > biomes[i].appearValue)//Biome merged with top biome
+						if (i != 0 && worldConfig.diffToMerge + noise[index] > biomes[i].appearValue)//Biome merged with top biome
 						{
-							mergeBiomeTable[index] = (biomes[i].appearValue - noise[index]) / diffToMerge;
+							mergeBiomeTable[index] = (biomes[i].appearValue - noise[index]) / worldConfig.diffToMerge;
 							//Debug.Log("TOP: "+biomes[i].appearValue + " - " + noise[index] + " / " + diffToMerge + " = " + mergeBiomeTable[index]);
 						}
 
-						else if (i != biomes.Length - 1 && diffToMerge - noise[index] < biomes[i+1].appearValue)//Biome merged with bottom biome
+						else if (i != biomes.Length - 1 && worldConfig.diffToMerge - noise[index] < biomes[i+1].appearValue)//Biome merged with bottom biome
 						{
-							mergeBiomeTable[index] = (noise[index] - biomes[i + 1].appearValue) / diffToMerge;
+							mergeBiomeTable[index] = (noise[index] - biomes[i + 1].appearValue) / worldConfig.diffToMerge;
 							//Debug.Log("BOT: "+noise[index] + " - " + biomes[i + 1].appearValue + " / " + diffToMerge + " = " + mergeBiomeTable[index]);
 						}
 
@@ -142,7 +175,7 @@ public class NoiseManager : Singleton<NoiseManager>
 	{
 		float[] noiseMap = new float[Constants.CHUNK_VERTEX_AREA];//Size of vertex + all next borders (For the slope calculation)
 
-		System.Random random = new System.Random(Instance.worldSeed);//Used System.random, because unity.Random is global, can cause problems if there is other random running in other script
+		System.Random random = new System.Random(Instance.worldConfig.worldSeed);//Used System.random, because unity.Random is global, can cause problems if there is other random running in other script
 		Vector2[] octaveOffsets = new Vector2[octaves];
 
 		float maxPossibleHeight = 0;
@@ -196,7 +229,7 @@ public class NoiseManager : Singleton<NoiseManager>
 	{
 		float[] noiseMap = new float[(Constants.CHUNK_VERTEX_SIZE + 2) * (Constants.CHUNK_VERTEX_SIZE + 2)];//Size of vertex + all next borders (For the slope calculation)
 
-		System.Random random = new System.Random(NoiseManager.Instance.worldSeed);//Used System.random, because unity.Random is global, can cause problems if there is other random running in other script
+		System.Random random = new System.Random(NoiseManager.Instance.worldConfig.worldSeed);//Used System.random, because unity.Random is global, can cause problems if there is other random running in other script
 		Vector2[] octaveOffsets = new Vector2[octaves];
 
 		float maxPossibleHeight = 0;
@@ -250,7 +283,7 @@ public class NoiseManager : Singleton<NoiseManager>
 	{
 		float[] noiseMap = new float[Constants.CHUNK_VERTEX_AREA];//Size of vertex + all next borders (For the slope calculation)
 
-		System.Random random = new System.Random(NoiseManager.Instance.worldSeed);//Used System.random, because unity.Random is global, can cause problems if there is other random running in other script
+		System.Random random = new System.Random(NoiseManager.Instance.worldConfig.worldSeed);//Used System.random, because unity.Random is global, can cause problems if there is other random running in other script
 
 		float offsetX = random.Next(-100000, 100000) + offset.x * Constants.CHUNK_SIZE ;
 		float offsetY = random.Next(-100000, 100000) + offset.y * Constants.CHUNK_SIZE ;

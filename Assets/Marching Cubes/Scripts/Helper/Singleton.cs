@@ -55,10 +55,19 @@ public abstract class Singleton<T> : MonoBehaviour where T : Component
         }
     }
 
+    //Destroy singleton instance on destroy
     public void OnDestroy()
     {
         if (instance == this)
             instance = null;
+    }
+
+    /// <summary>
+    /// Check if singleton is already created
+    /// </summary>
+    public static bool IsCreated()
+    {
+        return (instance != null);
     }
 
     #endregion

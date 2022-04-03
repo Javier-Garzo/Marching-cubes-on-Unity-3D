@@ -22,7 +22,7 @@ The unity project is a implementation of the algorithm [Marching Cubes](http://p
 * Marching cubes: Used in the terrain generation, support edition in real time and Job System + Burst for generate the chunks (it improve the efficiency).
 * Chunk System: Chunk system for load the terrain near the player.
 * Random terrain and biomes: The terrain have random generation (seed) and support different types of biomes for the generation.
-* Save system: The data saved in a .reg files inside the dir: Application.persistentDataPath + "/Chunks".
+* Save system: The data saved in a .reg files inside the dir: Application.persistentDataPath + [WorldName](#worldmanager) (Default one: "/default").
 
 
 <p align="center">
@@ -49,6 +49,7 @@ The configurations of the constants used internally in the engine, all indicated
 * MATERIAL_FOR_ROW: The number of materials in each row of the grid texture.
 * SAVE_GENERATED_CHUNKS: Used for save generate chunks without modify (when true). Recommend: false,
 * REGION_SAVE_COMPRESSED:Compress the .reg files . -File size -write time +CPU cost of compress a file. Recommend: TRUE
+* AUTO_CLEAR_WHEN_NOISE_CHANGE: If World Manager not exists in the scene and the current noise change, we clear the old world data (this remove the old chunks which generate wrong connections with new chunks).
 
 ### Managers
 Each manager (GameObjects inside Unity scene) have some parameters that you can modify for get different results, the majority of them only apply changes when new chunks are loaded if not indicate the contrary.
@@ -108,7 +109,7 @@ For apply this to other levels just add this new custom biome to the NoiseManage
 <br><br>
 
 ## World Manager<a name="worldmanager"></a>
-The world manager is a **optional** manager to support multiple worlds data directions, just to allow multiple games in different worlds. You can found the prefab in "Assets > Marching Cubes > WorldManager", this prefab contain a gameobject with the manager script.
+The world manager is a **optional** manager (if not exist "default" world name is selected)  to support multiple worlds folder system, just to allow multiple games in different worlds. You can found the prefab in "Assets > Marching Cubes > WorldManager", this prefab contain a gameobject with the manager script.
 This manager supports:
 * Change default world when manager is instanced: You can change the public variable "World" on inspector for select the loaded world. The default name if not change the variable or the manager is not instanced is "default".
 * Fast access button to worlds data folder on script: Exists a button on the inspector at the end of the script, that allow you to open the computer folder where all data/worlds are stored.

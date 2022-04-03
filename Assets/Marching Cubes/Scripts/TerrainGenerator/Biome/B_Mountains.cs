@@ -22,7 +22,7 @@ public class B_Mountains : Biome
 
 	public override byte[] GenerateChunkData(Vector2Int vecPos, float[] biomeMerge)
 	{
-		int surfaceStart = NoiseManager.Instance.surfaceLevel ;//Avoid too high value that generate bad mesh
+		int surfaceStart = NoiseManager.Instance.worldConfig.surfaceLevel ;//Avoid too high value that generate bad mesh
 		byte[] chunkData = new byte[Constants.CHUNK_BYTES];
 		float[] noise = NoiseManager.GenerateExtendedNoiseMap(scale, octaves, persistance, lacunarity, vecPos);
 		for (int z = 0; z < Constants.CHUNK_VERTEX_SIZE; z++)//start a 1 because the noise start at -1 of the chunk vertex
@@ -31,7 +31,7 @@ public class B_Mountains : Biome
 			{
 				// Get surface height of the x,z position 1276120704
 				float height = Mathf.Lerp(
-					NoiseManager.Instance.surfaceLevel,//Biome merge height
+					NoiseManager.Instance.worldConfig.surfaceLevel,//Biome merge height
 					(terrainHeightCurve.Evaluate(noise[(x+1) + (z+1) * (Constants.CHUNK_VERTEX_SIZE + 2)]) * (maxSurfaceheight - surfaceStart) + surfaceStart),//Desired biome height
 					biomeMerge[x + z * Constants.CHUNK_VERTEX_SIZE]);//Merge value,0 = full merge, 1 = no merge
 

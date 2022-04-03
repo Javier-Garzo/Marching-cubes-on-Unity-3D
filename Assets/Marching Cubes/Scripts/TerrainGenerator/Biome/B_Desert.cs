@@ -21,8 +21,8 @@ public class B_Desert : Biome
 			{
 				// Get surface height of the x,z position 
 				float height = Mathf.Lerp(
-					NoiseManager.Instance.surfaceLevel,//Biome merge height
-					(((terrainHeightCurve.Evaluate(noise[x + z * Constants.CHUNK_VERTEX_SIZE]) * 2 - 1) * maxHeightDifference) + NoiseManager.Instance.surfaceLevel),//Desired biome height
+					NoiseManager.Instance.worldConfig.surfaceLevel,//Biome merge height
+					(((terrainHeightCurve.Evaluate(noise[x + z * Constants.CHUNK_VERTEX_SIZE]) * 2 - 1) * maxHeightDifference) + NoiseManager.Instance.worldConfig.surfaceLevel),//Desired biome height
 					biomeMerge[x + z * Constants.CHUNK_VERTEX_SIZE]);//Merge value,0 = full merge, 1 = no merge
 
 				int heightY = Mathf.CeilToInt(height);//Vertex Y where surface start
