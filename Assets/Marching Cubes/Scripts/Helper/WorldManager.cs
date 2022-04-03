@@ -111,8 +111,21 @@ public class WorldManager : Singleton<WorldManager>
     public static NoiseManager.WorldConfig GetSelectedWorldConfig()
     {
         string selectedWorld = GetSelectedWorldName();
-        string json = File.ReadAllText(Application.persistentDataPath + WORLDS_DIRECTORY + '/' + selectedWorld + "/worldConfig.json");
-        return JsonUtility.FromJson<NoiseManager.WorldConfig>(json);
+        if (File.Exists(Application.persistentDataPath + WORLDS_DIRECTORY + '/' + selectedWorld + "/worldConfig.json"))
+        {
+            string json = File.ReadAllText(Application.persistentDataPath + WORLDS_DIRECTORY + '/' + selectedWorld + "/worldConfig.json");
+            return JsonUtility.FromJson<NoiseManager.WorldConfig>(json);
+        }
+        else
+        {
+            Debug.LogError("No worldConfig.json exist, generating a new one, using the default parameters.");
+            NoiseManager.WorldConfig newWorldConfig = new NoiseManager.WorldConfig();
+            newWorldConfig.worldSeed = Random.Range(int.MinValue, int.MaxValue);
+            string worldConfig = JsonUtility.ToJson(newWorldConfig);
+            File.WriteAllText(Application.persistentDataPath + WORLDS_DIRECTORY + '/' + selectedWorld + "/worldConfig.json", worldConfig);
+            return newWorldConfig;
+        }
+
     }
 
     /// <summary>
