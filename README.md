@@ -10,19 +10,21 @@ Terrain voxel engine with the use of Marching Cubes implemented in Unity 2020.3.
 1. [Introduction](#introduction)
 2. [Unity scenes](#unityScenes)
 3. [Configuration](#configuration)
-4. [Biome system](#biomeSystem)
+    1. [Constants](#subparagraph3-1)
+    2. [Managers](#subparagraph3-2)
+5. [Biome system](#biomeSystem)
     1. [Edit biomes](#subparagraph4-1)
-    2. [Create new biomes](#subparagraph4-1)
-5. [World manager](#worldmanager)
-6. [Future work](#futureWork)
-7. [References](#references)
+    2. [Create new biomes](#subparagraph4-2)
+6. [World manager](#worldmanager)
+7. [Future work](#futureWork)
+8. [References](#references)
 
 ## Introduction <a name="introduction"></a>
 The unity project is a implementation of the algorithm [Marching Cubes](http://paulbourke.net/geometry/polygonise/) for the generation of a voxel engine for generate a random and infinite terrain. The idea is try to offer a flexible solution for developers that want integrate a free Voxel engine in his game or give a base for develop your own Marching Cube engine. Some of the actual properties of the engine:
 * Marching cubes: Used in the terrain generation, support edition in real time and Job System + Burst for generate the chunks (it improve the efficiency).
 * Chunk System: Chunk system for load the terrain near the player.
 * Random terrain and biomes: The terrain have random generation (seed) and support different types of biomes for the generation.
-* Save system: The data saved in a .reg files inside the dir: Application.persistentDataPath + [WorldName](#worldmanager) (Default one: "/default").
+* Save system: The data saved in a .reg files inside the dir: Application.persistentDataPath + /worlds + [WorldName](#worldmanager) (Default one: "/default").
 
 
 <p align="center">
@@ -38,7 +40,7 @@ The unity project have a total of 3 different scenes:
 
 ## Configuration <a name="configuration"></a>
 You can configure the project to adapt it to your necessities. You have two type configurations: constants or managers.
-### Constants
+### Constants<a name="subparagraph3-1"></a>
 The configurations of the constants used internally in the engine, all indicated in the "Constants" script. You can modify the region of "Configurable variables" (don't touch other regions). You have the explanation of each variable in the script or in the below list: 
 * CHUNK_SIZE: The size of a chunk, all the chunks have the same x and z size.
 * MAX_HEIGHT: The total height of the chunk, also the max terrain height.
@@ -51,7 +53,7 @@ The configurations of the constants used internally in the engine, all indicated
 * REGION_SAVE_COMPRESSED:Compress the .reg files . -File size -write time +CPU cost of compress a file. Recommend: TRUE
 * AUTO_CLEAR_WHEN_NOISE_CHANGE: If World Manager not exists in the scene and the current noise change, we clear the old world data (this remove the old chunks which generate wrong connections with new chunks).
 
-### Managers
+### Managers<a name="subparagraph3-2"></a>
 Each manager (GameObjects inside Unity scene) have some parameters that you can modify for get different results, the majority of them only apply changes when new chunks are loaded if not indicate the contrary.
 
 Mesh builder manager ("MeshBuilder"):
@@ -98,7 +100,7 @@ You can use the "NoiseTerrainViewer" for use a bigger or smaller test area or ap
 Example of edition of the "B_Mountains" biome:
 ![B_Mountains edition](https://user-images.githubusercontent.com/58559223/94999078-200fea00-05b7-11eb-8a27-ed4f774b4980.gif)
 
-### Create custom biomes<a name="subparagraph4-1"></a>
+### Create custom biomes<a name="subparagraph4-2"></a>
 For create the a biome you need create a class that heir from the class "Biome" and that must have the function "public override byte[] GenerateChunkData(Vector2Int vecPos, float[] biomeMerge)" used for generate the biome texturization. For this process you can copy a paste the code of some actual biome and apply the necessary changes to the code for get your custom biome. 
 
 When you have the new biome class create, use the [edit biome section](#subparagraph4-1) for edit the parameters in a real time test terrain.
